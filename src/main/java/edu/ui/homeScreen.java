@@ -1,5 +1,7 @@
 package edu.csusm.communitysporteventfinder.ui;
-//Ui for registration screen of application, will have registration boxes for uusername, password, confirm password, email, and a register button. Should also bave the ability to go back to mainScreen
+//File Name: homeScreen.java
+//Group: 3
+//Description: Ui for registration screen of application, will have registration boxes for uusername, password, confirm password, email, and a register button. Should also bave the ability to go back to mainScreen
 //Date: 2/28/26
 import javax.swing.*;
 import java.awt.*;

@@ -1,5 +1,7 @@
 package edu.csusm.communitysporteventfinder.ui;
-//Ui for main login screen of application, will have Title and login boxes/login button and register option
+//File Name: loginScreen.java
+//Group: 3
+//Description: Ui for main login screen of application, will have Title and login boxes/login button and register option
 //Date: 2/28/26
 import javax.swing.*;
 import java.awt.*;
@@ -65,6 +67,12 @@ public class loginScreen extends JFrame{
             dispose();
             new registrationScreen().setVisible(true);
         });
+
+
+        JLabel versionLabel = new JLabel("Version 1.0");
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        loginPanel.add(versionLabel, gbc);
 
 
         add(loginPanel);
