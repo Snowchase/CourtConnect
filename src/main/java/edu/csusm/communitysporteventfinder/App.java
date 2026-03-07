@@ -1,6 +1,6 @@
 package edu.csusm.communitysporteventfinder;
 
-import edu.csusm.communitysporteventfinder.ui.loginScreen;
+import edu.ui.loginScreen;
 //File Name: App.java
 //Group: 3
 //Date: 3/37/2026

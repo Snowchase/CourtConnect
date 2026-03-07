@@ -1,4 +1,4 @@
-package edu.csusm.communitysporteventfinder.ui;
+package edu.ui;
 //File Name: loginScreen.java
 //Group: 3
 //Description: Ui for main login screen of application, will have Title and login boxes/login button and register option
