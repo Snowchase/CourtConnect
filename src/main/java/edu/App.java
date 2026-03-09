@@ -1,4 +1,4 @@
-package edu.csusm.communitysporteventfinder;
+package edu;
 
 import edu.ui.loginScreen;
 //File Name: App.java
