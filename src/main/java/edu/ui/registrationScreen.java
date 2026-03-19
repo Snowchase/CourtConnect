@@ -77,9 +77,11 @@ public class registrationScreen extends JFrame{
         backButton.addActionListener(e -> {
             dispose();
             new loginScreen().setVisible(true);
-
-}
-);
+});
+        registerButton.addActionListener(e -> {
+            dispose();
+            new homeScreen().setVisible(true);
+        });
         gbc.gridx = 1;
         gbc.gridy = 5;
         registrationPanel.add(backButton, gbc);

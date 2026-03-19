@@ -4,6 +4,9 @@ package edu.ui;
 //Description: Ui for main login screen of application, will have Title and login boxes/login button and register option
 //Date: 2/28/26
 import javax.swing.*;
+
+import edu.Controller.SQliteLoginManager;
+
 import java.awt.*;
 
 public class loginScreen extends JFrame{
@@ -53,11 +56,14 @@ public class loginScreen extends JFrame{
         gbc.gridy = 3;
         loginPanel.add(loginButton, gbc);
         //Logic needs to be added here to confirm that a user is authenticated before allowing access to software
-        //For now, the home screen will be avaliable immedietley
+        //For now, the home screen will be avaliable immedietley after clicking login button
+        SQliteLoginManager SQLLoginVerification = new SQliteLoginManager(usernameField.getText(), passwordField.getText());
+        if(SQLLoginVerification != null){
         loginButton.addActionListener(e -> {
             dispose();
             new homeScreen().setVisible(true);
         });
+        }
 
         JButton registerButton = new JButton("Register");
         gbc.gridx = 1;
