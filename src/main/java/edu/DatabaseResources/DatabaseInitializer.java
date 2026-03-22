@@ -48,6 +48,8 @@ public class DatabaseInitializer {
                     "(2, 'Tennis', '2026-04-20', 4, 1);");
             stmt.execute("INSERT OR IGNORE INTO sporting_events (sportingid, event_name, event_date, max_players, current_players) VALUES " +
                     "(3, 'Soccer', '2026-05-01', 22, 5);");
+            stmt.execute("INSERT OR IGNORE INTO athletes (athlete_id, username, password) VALUES (1, 'testuser', '1234');");
+System.out.println("Test athlete inserted.");
             System.out.println("Sample sporting events inserted.");
 
             stmt.close();
