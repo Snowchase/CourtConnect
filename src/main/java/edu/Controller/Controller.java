@@ -1,16 +1,16 @@
 package edu.Controller;
 
-// File Name: Controller.java
-// Group: 3
-// Date: 3/21/2026
-// Description: This class handles connections between UI and database(SQLite)
+//File Name: Controller.java
+//Group: 3
+//Date: 3/21/2026
+//Description: This class handles connections between UI and database(SQLite)
 
 public class Controller {
 
-    private final SQLiteJoinEventManager joinEventManager;
+    private SQLiteJoinEventManager joinEventManager;
 
     public Controller() {
-        this.joinEventManager = new SQLiteJoinEventManager();
+        joinEventManager = new SQLiteJoinEventManager();
     }
 
     public String joinEvent(int athleteId, int eventId) {
