@@ -3,7 +3,7 @@ package edu.ui;
 //Group: 3
 //Description: Home screen for application. Includes profile button, search field,
 //search button, logout button, event table, and join event feature.
-//Date: 2/28/26
+//Date: 2/21/26
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,9 +42,9 @@ public class homeScreen extends JFrame {
 
         JTable eventTable = new JTable(
                 new Object[][]{
-                        {"1", "Basketball", "2024-03-15", "City Arena"},
-                        {"2", "Tennis", "2024-04-10", "Central Park"},
-                        {"3", "Soccer", "2024-05-20", "Stadium A"}
+                        {"1", "Basketball", "2026-04-15", "City Arena"},
+                        {"2", "Tennis", "2026-04-20", "Central Park"},
+                        {"3", "Soccer", "2026-05-01", "Stadium A"}
                 },
                 new String[]{"Event ID", "Sport", "Date", "Location"}
         );
@@ -52,8 +52,8 @@ public class homeScreen extends JFrame {
         JScrollPane tableScrollPane = new JScrollPane(eventTable);
 
         homePanel.add(welcomeLabel, BorderLayout.NORTH);
-        homePanel.add(topPanel, BorderLayout.SOUTH);
         homePanel.add(tableScrollPane, BorderLayout.CENTER);
+        homePanel.add(topPanel, BorderLayout.SOUTH);
 
         add(homePanel);
         homePanel.setVisible(true);
@@ -79,6 +79,8 @@ public class homeScreen extends JFrame {
 
                 if (result.equals("SUCCESS")) {
                     JOptionPane.showMessageDialog(this, "Successfully joined the event.");
+                } else if (result.equals("ATHLETE_NOT_FOUND")) {
+                    JOptionPane.showMessageDialog(this, "Athlete ID does not exist.");
                 } else if (result.equals("EVENT_NOT_FOUND")) {
                     JOptionPane.showMessageDialog(this, "Event no longer exists.");
                 } else if (result.equals("EVENT_FULL")) {
