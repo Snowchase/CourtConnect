@@ -4,35 +4,56 @@ import java.sql.*;
 //File Name: DatabaseInitializer.java
 //Group: 3
 //Date: 3/37/2026
-//Description: This class creates database and tables for athletes/sporting Events if  dont previously exist
+//Description: This class creates database and tables for athletes/sporting events if they do not previously exist
 public class DatabaseInitializer {
     public void initializeDatabase() {
-        // Implementation for initializing the athletes/sporting events database and tables
         try {
-            // Create connection to SQLite database
             Connection conn = DriverManager.getConnection("jdbc:sqlite:database.db");
             System.out.println("Connection to SQLite has been established.");
 
-            // Create statement for creating tables
             Statement stmt = conn.createStatement();
 
-            // SQL statement to create athletes table if it doesn't exist
             String createAthletesTable = "CREATE TABLE IF NOT EXISTS athletes (" +
+                    "athlete_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "username TEXT NOT NULL UNIQUE," +
                     "password TEXT NOT NULL" +
                     ");";
             stmt.execute(createAthletesTable);
             System.out.println("Athletes table created or already exists.");
 
-            // SQL statement to create sporting_events table if it doesn't exist
             String createSportingEventsTable = "CREATE TABLE IF NOT EXISTS sporting_events (" +
                     "sportingid INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "event_name TEXT NOT NULL," +
-                    "event_date TEXT NOT NULL" +
+                    "event_date TEXT NOT NULL," +
+                    "max_players INTEGER NOT NULL DEFAULT 10," +
+                    "current_players INTEGER NOT NULL DEFAULT 0" +
                     ");";
             stmt.execute(createSportingEventsTable);
             System.out.println("Sporting Events table created or already exists.");
-        }catch(Exception e) {
+
+            String createEventParticipantsTable = "CREATE TABLE IF NOT EXISTS event_participants (" +
+                    "participant_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "athlete_id INTEGER NOT NULL," +
+                    "sportingid INTEGER NOT NULL," +
+                    "UNIQUE(athlete_id, sportingid)," +
+                    "FOREIGN KEY (athlete_id) REFERENCES athletes(athlete_id)," +
+                    "FOREIGN KEY (sportingid) REFERENCES sporting_events(sportingid)" +
+                    ");";
+            stmt.execute(createEventParticipantsTable);
+            System.out.println("Event Participants table created or already exists.");
+
+            stmt.execute("INSERT OR IGNORE INTO sporting_events (sportingid, event_name, event_date, max_players, current_players) VALUES " +
+                    "(1, 'Basketball', '2026-04-15', 10, 2);");
+            stmt.execute("INSERT OR IGNORE INTO sporting_events (sportingid, event_name, event_date, max_players, current_players) VALUES " +
+                    "(2, 'Tennis', '2026-04-20', 4, 1);");
+            stmt.execute("INSERT OR IGNORE INTO sporting_events (sportingid, event_name, event_date, max_players, current_players) VALUES " +
+                    "(3, 'Soccer', '2026-05-01', 22, 5);");
+            System.out.println("Sample sporting events inserted.");
+
+            stmt.close();
+            conn.close();
+
+        } catch(Exception e) {
             System.out.println(e.getMessage());
         }
     }
