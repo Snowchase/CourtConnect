@@ -2,15 +2,15 @@ package edu.Controller;
 
 import java.sql.*;
 
-// File Name: SQLiteJoinEventManager.java
-// Group: 3
-// Description: Handles join event database operations
+//File Name: SQLiteJoinEventManager.java
+//Group: 3
+//Description: Handles join event database operations
 
 public class SQLiteJoinEventManager {
 
     private static final String DB_URL = "jdbc:sqlite:database.db";
 
-    // Change these table names / column names if your DB uses different names
+    // Change these if your friend used different table names
     private static final String EVENTS_TABLE = "sporting_events";
     private static final String PARTICIPANTS_TABLE = "event_participants";
 
@@ -31,7 +31,7 @@ public class SQLiteJoinEventManager {
 
             return exists;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("eventExists error: " + e.getMessage());
             return false;
         }
     }
@@ -59,7 +59,7 @@ public class SQLiteJoinEventManager {
 
             return full;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("isEventFull error: " + e.getMessage());
             return true;
         }
     }
@@ -82,7 +82,7 @@ public class SQLiteJoinEventManager {
 
             return alreadyJoined;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("isAlreadyJoined error: " + e.getMessage());
             return false;
         }
     }
@@ -118,10 +118,10 @@ public class SQLiteJoinEventManager {
                     conn.rollback();
                 }
             } catch (SQLException rollbackException) {
-                System.out.println(rollbackException.getMessage());
+                System.out.println("Rollback error: " + rollbackException.getMessage());
             }
 
-            System.out.println(e.getMessage());
+            System.out.println("addParticipant error: " + e.getMessage());
             return false;
 
         } finally {
@@ -130,7 +130,7 @@ public class SQLiteJoinEventManager {
                 if (updateEventCount != null) updateEventCount.close();
                 if (conn != null) conn.close();
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                System.out.println("Closing connection error: " + e.getMessage());
             }
         }
     }
