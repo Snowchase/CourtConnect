@@ -61,26 +61,41 @@ public class SQLiteJoinEventManager {
     }
 
     public boolean athleteExists(int athleteId) {
-        try {
-            Connection conn = DriverManager.getConnection(DB_URL);
-            PreparedStatement pstmt = conn.prepareStatement(
-                    "SELECT 1 FROM athletes WHERE athlete_id = ?"
-            );
-            pstmt.setInt(1, athleteId);
+    try {
+        Connection conn = DriverManager.getConnection(DB_URL);
 
-            ResultSet rs = pstmt.executeQuery();
-            boolean exists = rs.next();
+        System.out.println("Checking athlete_id: " + athleteId);
 
-            rs.close();
-            pstmt.close();
-            conn.close();
+        Statement stmt = conn.createStatement();
+        ResultSet allAthletes = stmt.executeQuery("SELECT athlete_id, username FROM athletes");
 
-            return exists;
-        } catch (SQLException e) {
-            System.out.println("athleteExists error: " + e.getMessage());
-            return false;
+        System.out.println("Athletes currently in DB:");
+        while (allAthletes.next()) {
+            System.out.println("athlete_id=" + allAthletes.getInt("athlete_id")
+                    + ", username=" + allAthletes.getString("username"));
         }
+
+        allAthletes.close();
+        stmt.close();
+
+        PreparedStatement pstmt = conn.prepareStatement(
+                "SELECT 1 FROM athletes WHERE athlete_id = ?"
+        );
+        pstmt.setInt(1, athleteId);
+
+        ResultSet rs = pstmt.executeQuery();
+        boolean exists = rs.next();
+
+        rs.close();
+        pstmt.close();
+        conn.close();
+
+        return exists;
+    } catch (SQLException e) {
+        System.out.println("athleteExists error: " + e.getMessage());
+        return false;
     }
+}
 
     public boolean isAlreadyJoined(int athleteId, int eventId) {
         try {
