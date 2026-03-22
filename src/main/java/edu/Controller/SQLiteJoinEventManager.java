@@ -10,15 +10,11 @@ public class SQLiteJoinEventManager {
 
     private static final String DB_URL = "jdbc:sqlite:database.db";
 
-    // Change these if your friend used different table names
-    private static final String EVENTS_TABLE = "sporting_events";
-    private static final String PARTICIPANTS_TABLE = "event_participants";
-
     public boolean eventExists(int eventId) {
         try {
             Connection conn = DriverManager.getConnection(DB_URL);
             PreparedStatement pstmt = conn.prepareStatement(
-                    "SELECT 1 FROM " + EVENTS_TABLE + " WHERE event_id = ?"
+                    "SELECT 1 FROM sporting_events WHERE sportingid = ?"
             );
             pstmt.setInt(1, eventId);
 
@@ -40,7 +36,7 @@ public class SQLiteJoinEventManager {
         try {
             Connection conn = DriverManager.getConnection(DB_URL);
             PreparedStatement pstmt = conn.prepareStatement(
-                    "SELECT current_players, max_players FROM " + EVENTS_TABLE + " WHERE event_id = ?"
+                    "SELECT current_players, max_players FROM sporting_events WHERE sportingid = ?"
             );
             pstmt.setInt(1, eventId);
 
@@ -64,11 +60,33 @@ public class SQLiteJoinEventManager {
         }
     }
 
+    public boolean athleteExists(int athleteId) {
+        try {
+            Connection conn = DriverManager.getConnection(DB_URL);
+            PreparedStatement pstmt = conn.prepareStatement(
+                    "SELECT 1 FROM athletes WHERE athlete_id = ?"
+            );
+            pstmt.setInt(1, athleteId);
+
+            ResultSet rs = pstmt.executeQuery();
+            boolean exists = rs.next();
+
+            rs.close();
+            pstmt.close();
+            conn.close();
+
+            return exists;
+        } catch (SQLException e) {
+            System.out.println("athleteExists error: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean isAlreadyJoined(int athleteId, int eventId) {
         try {
             Connection conn = DriverManager.getConnection(DB_URL);
             PreparedStatement pstmt = conn.prepareStatement(
-                    "SELECT 1 FROM " + PARTICIPANTS_TABLE + " WHERE athlete_id = ? AND event_id = ?"
+                    "SELECT 1 FROM event_participants WHERE athlete_id = ? AND sportingid = ?"
             );
             pstmt.setInt(1, athleteId);
             pstmt.setInt(2, eventId);
@@ -97,14 +115,14 @@ public class SQLiteJoinEventManager {
             conn.setAutoCommit(false);
 
             insertParticipant = conn.prepareStatement(
-                    "INSERT INTO " + PARTICIPANTS_TABLE + " (athlete_id, event_id) VALUES (?, ?)"
+                    "INSERT INTO event_participants (athlete_id, sportingid) VALUES (?, ?)"
             );
             insertParticipant.setInt(1, athleteId);
             insertParticipant.setInt(2, eventId);
             insertParticipant.executeUpdate();
 
             updateEventCount = conn.prepareStatement(
-                    "UPDATE " + EVENTS_TABLE + " SET current_players = current_players + 1 WHERE event_id = ?"
+                    "UPDATE sporting_events SET current_players = current_players + 1 WHERE sportingid = ?"
             );
             updateEventCount.setInt(1, eventId);
             updateEventCount.executeUpdate();
@@ -114,9 +132,7 @@ public class SQLiteJoinEventManager {
 
         } catch (SQLException e) {
             try {
-                if (conn != null) {
-                    conn.rollback();
-                }
+                if (conn != null) conn.rollback();
             } catch (SQLException rollbackException) {
                 System.out.println("Rollback error: " + rollbackException.getMessage());
             }
@@ -130,7 +146,7 @@ public class SQLiteJoinEventManager {
                 if (updateEventCount != null) updateEventCount.close();
                 if (conn != null) conn.close();
             } catch (SQLException e) {
-                System.out.println("Closing connection error: " + e.getMessage());
+                System.out.println("Closing error: " + e.getMessage());
             }
         }
     }
