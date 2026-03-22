@@ -14,6 +14,10 @@ public class Controller {
     }
 
     public String joinEvent(int athleteId, int eventId) {
+        if (!joinEventManager.athleteExists(athleteId)) {
+            return "ATHLETE_NOT_FOUND";
+        }
+
         if (!joinEventManager.eventExists(eventId)) {
             return "EVENT_NOT_FOUND";
         }
