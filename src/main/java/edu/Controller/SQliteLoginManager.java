@@ -28,13 +28,12 @@ public class SQliteLoginManager {
             //Return results in resultset from searching table for user
             ResultSet rs = pstmt.executeQuery();
             //If the resultSet has information in it, user was found
-            //Otherwise User was not found 
+            //Otherwise User was not found
             if(rs.next()){
                 System.out.println("User authenticated");
             } else {
                 System.out.println("User not found");
             }
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

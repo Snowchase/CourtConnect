@@ -7,6 +7,9 @@ package edu.ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import edu.Controller.Controller;
 
 public class homeScreen extends JFrame {
@@ -30,6 +33,7 @@ public class homeScreen extends JFrame {
         JButton profileButton = new JButton("Profile");
         JTextField searchField = new JTextField(20);
         JButton searchButton = new JButton("Search");
+        JButton createEventButton = new JButton("Create Event");
         JButton joinEventButton = new JButton("Join Event");
         JButton logoutButton = new JButton("Logout");
 
@@ -37,6 +41,7 @@ public class homeScreen extends JFrame {
         topPanel.add(profileButton);
         topPanel.add(searchField);
         topPanel.add(searchButton);
+        topPanel.add(createEventButton);
         topPanel.add(joinEventButton);
         topPanel.add(logoutButton);
 
@@ -57,6 +62,26 @@ public class homeScreen extends JFrame {
 
         add(homePanel);
         homePanel.setVisible(true);
+
+        profileButton.addActionListener(e ->{
+            dispose();
+            new userProfileScreen().setVisible(true);
+        });
+
+        createEventButton.addActionListener(e ->{
+                dispose();
+                new eventCreateScreen().setVisible(true);
+                });
+        //This method takes click point of a clicked event and will show event details
+        /*eventTable.addMouseListener(new MouseAdapter() {
+            public void click(MouseEvent e){
+                int row = eventTable.rowAtPoint(e.getPoint());
+                if(e.getClickCount() == 2){
+                    new eventViewScreen(event);
+                }
+            }
+        });
+        */
 
         joinEventButton.addActionListener(e -> {
             try {

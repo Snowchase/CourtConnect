@@ -58,13 +58,12 @@ public class loginScreen extends JFrame{
         //Logic needs to be added here to confirm that a user is authenticated before allowing access to software
         //For now, the home screen will be avaliable immedietley after clicking login button
         SQliteLoginManager SQLLoginVerification = new SQliteLoginManager(usernameField.getText(), passwordField.getText());
-        if(SQLLoginVerification != null){
-        loginButton.addActionListener(e -> {
-            dispose();
-            new homeScreen().setVisible(true);
-        });
-        }
-
+            if (SQLLoginVerification != null) {
+                loginButton.addActionListener(e -> {
+                    dispose();
+                    new homeScreen().setVisible(true);
+                });
+            }
         JButton registerButton = new JButton("Register");
         gbc.gridx = 1;
         gbc.gridy = 3;
