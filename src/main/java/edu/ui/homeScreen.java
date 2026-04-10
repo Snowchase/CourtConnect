@@ -18,7 +18,7 @@ public class homeScreen extends JFrame {
 
     public homeScreen() {
         setTitle("Court Connect - Home");
-        setSize(650, 400);
+        setSize(800, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -36,14 +36,16 @@ public class homeScreen extends JFrame {
         JButton createEventButton = new JButton("Create Event");
         JButton joinEventButton = new JButton("Join Event");
         JButton logoutButton = new JButton("Logout");
-
+        JButton viewButton = new JButton("View Event");
         JPanel topPanel = new JPanel();
         topPanel.add(profileButton);
         topPanel.add(searchField);
         topPanel.add(searchButton);
         topPanel.add(createEventButton);
         topPanel.add(joinEventButton);
+        topPanel.add(viewButton);
         topPanel.add(logoutButton);
+
 
         JTable eventTable = new JTable(
                 new Object[][]{
@@ -73,15 +75,15 @@ public class homeScreen extends JFrame {
                 new eventCreateScreen().setVisible(true);
                 });
         //This method takes click point of a clicked event and will show event details
-        /*eventTable.addMouseListener(new MouseAdapter() {
+        eventTable.addMouseListener(new MouseAdapter() {
             public void click(MouseEvent e){
                 int row = eventTable.rowAtPoint(e.getPoint());
                 if(e.getClickCount() == 2){
-                    new eventViewScreen(event);
+                    dispose();
+                    new eventViewScreen();
                 }
             }
         });
-        */
 
         joinEventButton.addActionListener(e -> {
             try {
@@ -119,6 +121,11 @@ public class homeScreen extends JFrame {
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Athlete ID and Event ID must be numbers.");
             }
+        });
+
+        viewButton.addActionListener(e -> {
+            dispose();
+            new eventViewScreen().setVisible(true);
         });
 
         logoutButton.addActionListener(e -> {

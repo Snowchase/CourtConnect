@@ -8,7 +8,6 @@ package edu.Controller;
 public class Controller {
 
     private SQLiteJoinEventManager joinEventManager;
-
     public Controller() {
         joinEventManager = new SQLiteJoinEventManager();
     }
