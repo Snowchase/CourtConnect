@@ -1,6 +1,8 @@
 package edu.Controller;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 //File Name: SQLiteJoinEventManager.java
 //Group: 3
@@ -61,41 +63,26 @@ public class SQLiteJoinEventManager {
     }
 
     public boolean athleteExists(int athleteId) {
-    try {
-        Connection conn = DriverManager.getConnection(DB_URL);
+        try {
+            Connection conn = DriverManager.getConnection(DB_URL);
+            PreparedStatement pstmt = conn.prepareStatement(
+                    "SELECT 1 FROM athletes WHERE athlete_id = ?"
+            );
+            pstmt.setInt(1, athleteId);
 
-        System.out.println("Checking athlete_id: " + athleteId);
+            ResultSet rs = pstmt.executeQuery();
+            boolean exists = rs.next();
 
-        Statement stmt = conn.createStatement();
-        ResultSet allAthletes = stmt.executeQuery("SELECT athlete_id, username FROM athletes");
+            rs.close();
+            pstmt.close();
+            conn.close();
 
-        System.out.println("Athletes currently in DB:");
-        while (allAthletes.next()) {
-            System.out.println("athlete_id=" + allAthletes.getInt("athlete_id")
-                    + ", username=" + allAthletes.getString("username"));
+            return exists;
+        } catch (SQLException e) {
+            System.out.println("athleteExists error: " + e.getMessage());
+            return false;
         }
-
-        allAthletes.close();
-        stmt.close();
-
-        PreparedStatement pstmt = conn.prepareStatement(
-                "SELECT 1 FROM athletes WHERE athlete_id = ?"
-        );
-        pstmt.setInt(1, athleteId);
-
-        ResultSet rs = pstmt.executeQuery();
-        boolean exists = rs.next();
-
-        rs.close();
-        pstmt.close();
-        conn.close();
-
-        return exists;
-    } catch (SQLException e) {
-        System.out.println("athleteExists error: " + e.getMessage());
-        return false;
     }
-}
 
     public boolean isAlreadyJoined(int athleteId, int eventId) {
         try {
@@ -163,6 +150,62 @@ public class SQLiteJoinEventManager {
             } catch (SQLException e) {
                 System.out.println("Closing error: " + e.getMessage());
             }
+        }
+    }
+
+    public Object[][] getAllEvents() {
+        List<Object[]> rows = new ArrayList<>();
+
+        try {
+            Connection conn = DriverManager.getConnection(DB_URL);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(
+                    "SELECT sportingid, sport, event_date, location FROM sporting_events ORDER BY sportingid"
+            );
+
+            while (rs.next()) {
+                rows.add(new Object[]{
+                        rs.getInt("sportingid"),
+                        rs.getString("sport"),
+                        rs.getString("event_date"),
+                        rs.getString("location")
+                });
+            }
+
+            rs.close();
+            stmt.close();
+            conn.close();
+
+        } catch (SQLException e) {
+            System.out.println("getAllEvents error: " + e.getMessage());
+        }
+
+        return rows.toArray(new Object[0][]);
+    }
+
+    public boolean createEvent(String eventName, String sport, String eventDate, String location, String description, int maxPlayers) {
+        try {
+            Connection conn = DriverManager.getConnection(DB_URL);
+            PreparedStatement pstmt = conn.prepareStatement(
+                    "INSERT INTO sporting_events (event_name, sport, event_date, location, description, max_players, current_players) VALUES (?, ?, ?, ?, ?, ?, 0)"
+            );
+
+            pstmt.setString(1, eventName);
+            pstmt.setString(2, sport);
+            pstmt.setString(3, eventDate);
+            pstmt.setString(4, location);
+            pstmt.setString(5, description);
+            pstmt.setInt(6, maxPlayers);
+
+            pstmt.executeUpdate();
+
+            pstmt.close();
+            conn.close();
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("createEvent error: " + e.getMessage());
+            return false;
         }
     }
 }
