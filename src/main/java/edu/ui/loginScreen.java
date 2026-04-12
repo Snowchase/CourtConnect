@@ -3,16 +3,18 @@ package edu.ui;
 //Group: 3
 //Description: Ui for main login screen of application, will have Title and login boxes/login button and register option
 //Date: 2/28/26
+
 import javax.swing.*;
-
-import edu.Controller.SQliteLoginManager;
-
+import edu.Controller.Controller;
 import java.awt.*;
 
-public class loginScreen extends JFrame{
+public class loginScreen extends JFrame {
     private Panel loginPanel;
+    private Controller controller;
 
-    public loginScreen(){
+    public loginScreen() {
+        controller = new Controller();
+
         setTitle("Court Connect");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -55,30 +57,40 @@ public class loginScreen extends JFrame{
         gbc.gridx = 0;
         gbc.gridy = 3;
         loginPanel.add(loginButton, gbc);
-        //Logic needs to be added here to confirm that a user is authenticated before allowing access to software
-        //For now, the home screen will be avaliable immedietley after clicking login button
-        SQliteLoginManager SQLLoginVerification = new SQliteLoginManager(usernameField.getText(), passwordField.getText());
-            if (SQLLoginVerification != null) {
-                loginButton.addActionListener(e -> {
-                    dispose();
-                    new homeScreen().setVisible(true);
-                });
+
+        loginButton.addActionListener(e -> {
+            String username = usernameField.getText().trim();
+            String password = new String(passwordField.getPassword()).trim();
+
+            if (username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Username and password are required.");
+                return;
             }
+
+            int athleteId = controller.login(username, password);
+
+            if (athleteId != -1) {
+                dispose();
+                new homeScreen(athleteId).setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid username or password.");
+            }
+        });
+
         JButton registerButton = new JButton("Register");
         gbc.gridx = 1;
         gbc.gridy = 3;
         loginPanel.add(registerButton, gbc);
+
         registerButton.addActionListener(e -> {
             dispose();
             new registrationScreen().setVisible(true);
         });
 
-
         JLabel versionLabel = new JLabel("Version 1.0");
         gbc.gridx = 1;
         gbc.gridy = 4;
         loginPanel.add(versionLabel, gbc);
-
 
         add(loginPanel);
     }
