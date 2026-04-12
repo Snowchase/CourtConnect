@@ -9,20 +9,26 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import edu.Controller.Controller;
 
 public class homeScreen extends JFrame {
     private Panel homePanel;
     private Controller controller;
+    private int athleteId;
+    private JTable eventTable;
 
     public homeScreen() {
+        this(-1);
+    }
+
+    public homeScreen(int athleteId) {
+        this.athleteId = athleteId;
+        this.controller = new Controller();
+
         setTitle("Court Connect - Home");
         setSize(800, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-
-        controller = new Controller();
 
         homePanel = new Panel();
         homePanel.setLayout(new BorderLayout());
@@ -37,6 +43,7 @@ public class homeScreen extends JFrame {
         JButton joinEventButton = new JButton("Join Event");
         JButton logoutButton = new JButton("Logout");
         JButton viewButton = new JButton("View Event");
+
         JPanel topPanel = new JPanel();
         topPanel.add(profileButton);
         topPanel.add(searchField);
@@ -46,13 +53,8 @@ public class homeScreen extends JFrame {
         topPanel.add(viewButton);
         topPanel.add(logoutButton);
 
-
-        JTable eventTable = new JTable(
-                new Object[][]{
-                        {"1", "Basketball", "2026-04-15", "City Arena"},
-                        {"2", "Tennis", "2026-04-20", "Central Park"},
-                        {"3", "Soccer", "2026-05-01", "Stadium A"}
-                },
+        eventTable = new JTable(
+                controller.getAllEvents(),
                 new String[]{"Event ID", "Sport", "Date", "Location"}
         );
 
@@ -65,42 +67,51 @@ public class homeScreen extends JFrame {
         add(homePanel);
         homePanel.setVisible(true);
 
-        profileButton.addActionListener(e ->{
+        profileButton.addActionListener(e -> {
             dispose();
             new userProfileScreen().setVisible(true);
         });
 
-        createEventButton.addActionListener(e ->{
-                dispose();
-                new eventCreateScreen().setVisible(true);
-                });
-        //This method takes click point of a clicked event and will show event details
+        createEventButton.addActionListener(e -> {
+            dispose();
+            new eventCreateScreen().setVisible(true);
+        });
+
         eventTable.addMouseListener(new MouseAdapter() {
-            public void click(MouseEvent e){
+            @Override
+            public void mouseClicked(MouseEvent e) {
                 int row = eventTable.rowAtPoint(e.getPoint());
-                if(e.getClickCount() == 2){
+                if (e.getClickCount() == 2 && row != -1) {
                     dispose();
-                    new eventViewScreen();
+                    new eventViewScreen().setVisible(true);
                 }
             }
         });
 
         joinEventButton.addActionListener(e -> {
             try {
-                String athleteIdText = JOptionPane.showInputDialog(this, "Enter Athlete ID:");
-                if (athleteIdText == null || athleteIdText.trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Athlete ID is required.");
-                    return;
+                int eventId;
+
+                int selectedRow = eventTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    eventId = Integer.parseInt(eventTable.getValueAt(selectedRow, 0).toString());
+                } else {
+                    String eventIdText = JOptionPane.showInputDialog(this, "Enter Event ID:");
+                    if (eventIdText == null || eventIdText.trim().isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "Event ID is required.");
+                        return;
+                    }
+                    eventId = Integer.parseInt(eventIdText.trim());
                 }
 
-                String eventIdText = JOptionPane.showInputDialog(this, "Enter Event ID:");
-                if (eventIdText == null || eventIdText.trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Event ID is required.");
-                    return;
+                if (athleteId == -1) {
+                    String athleteIdText = JOptionPane.showInputDialog(this, "Enter Athlete ID:");
+                    if (athleteIdText == null || athleteIdText.trim().isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "Athlete ID is required.");
+                        return;
+                    }
+                    athleteId = Integer.parseInt(athleteIdText.trim());
                 }
-
-                int athleteId = Integer.parseInt(athleteIdText.trim());
-                int eventId = Integer.parseInt(eventIdText.trim());
 
                 String result = controller.joinEvent(athleteId, eventId);
 
@@ -118,6 +129,8 @@ public class homeScreen extends JFrame {
                     JOptionPane.showMessageDialog(this, "Unable to join event. Please try again.");
                 }
 
+                refreshEventTable();
+
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Athlete ID and Event ID must be numbers.");
             }
@@ -128,9 +141,20 @@ public class homeScreen extends JFrame {
             new eventViewScreen().setVisible(true);
         });
 
+        searchButton.addActionListener(e -> {
+            JOptionPane.showMessageDialog(this, "Search feature not fully implemented yet.");
+        });
+
         logoutButton.addActionListener(e -> {
             dispose();
             new loginScreen().setVisible(true);
         });
+    }
+
+    private void refreshEventTable() {
+        eventTable.setModel(new javax.swing.table.DefaultTableModel(
+                controller.getAllEvents(),
+                new String[]{"Event ID", "Sport", "Date", "Location"}
+        ));
     }
 }
