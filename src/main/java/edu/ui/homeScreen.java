@@ -104,6 +104,8 @@ public class homeScreen extends JFrame {
                     }
                     eventId = Integer.parseInt(eventIdText.trim());
                 }
+                
+                System.out.println("Join button athleteId = " + athleteId);
 
                 if (athleteId == -1) {
                     String athleteIdText = JOptionPane.showInputDialog(this, "Enter Athlete ID:");
