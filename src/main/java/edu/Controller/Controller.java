@@ -2,10 +2,7 @@ package edu.Controller;
 
 //File Name: Controller.java
 //Group: 3
-//Edited last:
-//Date: 3/37/2026
-//Description: This class handles connections between UI and database(SQLite), Specifically it 
-// connects to the other managers resposible for handling joining, login, and registration.
+//Description: This class handles connections between UI and database(SQLite)
 
 public class Controller {
 
@@ -58,9 +55,5 @@ public class Controller {
 
     public Object[][] getAllEvents() {
         return joinEventManager.getAllEvents();
-    }
-
-    public boolean createEvent(String eventName, String sport, String eventDate, String location, String description, int maxPlayers) {
-        return joinEventManager.createEvent(eventName, sport, eventDate, location, description, maxPlayers);
     }
 }
