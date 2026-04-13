@@ -4,6 +4,7 @@ import java.sql.*;
 
 //File Name: SQliteRegistrationManager.java
 //Group: 3
+//Edited last:
 //Date: 3/37/2026
 //Description: This class manages all data requests to SQlite regarding registration and returns data to the controller
 public class SQliteRegistrationManager {

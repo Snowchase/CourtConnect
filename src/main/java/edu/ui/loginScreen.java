@@ -1,7 +1,8 @@
 package edu.ui;
 //File Name: loginScreen.java
 //Group: 3
-//Description: Ui for main login screen of application, will have Title and login boxes/login button and register option
+//Edited last:  Chase
+//Description: Initial Ui for login screen of application, Title and login boxes/login button and register option
 //Date: 2/28/26
 
 import javax.swing.*;
@@ -67,7 +68,7 @@ public class loginScreen extends JFrame {
                 return;
             }
 
-            int athleteId = controller.login(username, password);
+            final int athleteId = controller.login(username, password);
 
             if (athleteId != -1) {
                 dispose();

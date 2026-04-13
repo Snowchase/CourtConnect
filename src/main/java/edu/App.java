@@ -3,10 +3,10 @@ package edu;
 import edu.DatabaseResources.DatabaseInitializer;
 import edu.ui.loginScreen;
 //File Name: App.java
-
 //Group: 3
+//Edited last:
 //Date: 3/37/2026
-//Description: This class is for launching application and routing to login or registration screen
+//Description: This class is for launching application and routing to login screen, Calls database initializer for Athletes, Events, and event participants
 public class App
 {
     public static void main( String[] args )

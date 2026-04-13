@@ -6,7 +6,9 @@ import java.util.List;
 
 //File Name: SQLiteJoinEventManager.java
 //Group: 3
+//Edited last:
 //Description: Handles join event database operations
+//Date: 
 
 public class SQLiteJoinEventManager {
 

@@ -4,6 +4,7 @@ import java.sql.*;
 
 //File Name: DatabaseInitializer.java
 //Group: 3
+//Edited last: 
 //Date: 3/37/2026
 //Description: This class creates database and tables for athletes/sporting events if they do not previously exist
 public class DatabaseInitializer {

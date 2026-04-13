@@ -1,3 +1,9 @@
+//File Name: eventCreateScreen.java
+//Group: 3
+//Edited last:  Chase
+//Description: Event creation screen for application. Includes fields for event details and creation options.
+//Date: 2/21/26
+
 package edu.ui;
 
 import javax.swing.*;

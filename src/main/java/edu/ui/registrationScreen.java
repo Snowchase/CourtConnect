@@ -1,7 +1,8 @@
 package edu.ui;
 //File Name: registrationScreen.java
 //Group: 3
-//Description: Ui for registration screen of application
+//Edited last:  Chase
+//Description: Ui for registration screen of application. Includes fields for username, password, confirm password, register button, and back button to login screen.
 //Date: 2/28/26
 
 import javax.swing.*;

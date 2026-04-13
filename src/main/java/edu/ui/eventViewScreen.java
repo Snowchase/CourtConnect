@@ -1,3 +1,8 @@
+//File Name: eventViewScreen.java
+//Group: 3
+//Edited last:  Chase
+//Description: Event view screen for application. Includes event details and view options.
+//Date: 2/21/26
 package edu.ui;
 
 import java.awt.*;

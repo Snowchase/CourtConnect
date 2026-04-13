@@ -2,8 +2,10 @@ package edu.Controller;
 
 //File Name: Controller.java
 //Group: 3
+//Edited last:
 //Date: 3/37/2026
-//Description: This class handles connections between UI and database(SQLite)
+//Description: This class handles connections between UI and database(SQLite), Specifically it 
+// connects to the other managers resposible for handling joining, login, and registration.
 
 public class Controller {
 
