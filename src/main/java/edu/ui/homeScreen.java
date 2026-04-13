@@ -1,14 +1,7 @@
 package edu.ui;
-//File Name: homeScreen.java
-//Group: 3
-//Description: Home screen for application. Includes profile button, search field,
-//search button, logout button, event table, and join event feature.
-//Date: 2/21/26
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import edu.Controller.Controller;
 
 public class homeScreen extends JFrame {
@@ -39,18 +32,14 @@ public class homeScreen extends JFrame {
         JButton profileButton = new JButton("Profile");
         JTextField searchField = new JTextField(20);
         JButton searchButton = new JButton("Search");
-        JButton createEventButton = new JButton("Create Event");
         JButton joinEventButton = new JButton("Join Event");
         JButton logoutButton = new JButton("Logout");
-        JButton viewButton = new JButton("View Event");
 
         JPanel topPanel = new JPanel();
         topPanel.add(profileButton);
         topPanel.add(searchField);
         topPanel.add(searchButton);
-        topPanel.add(createEventButton);
         topPanel.add(joinEventButton);
-        topPanel.add(viewButton);
         topPanel.add(logoutButton);
 
         eventTable = new JTable(
@@ -68,24 +57,7 @@ public class homeScreen extends JFrame {
         homePanel.setVisible(true);
 
         profileButton.addActionListener(e -> {
-            dispose();
-            new userProfileScreen().setVisible(true);
-        });
-
-        createEventButton.addActionListener(e -> {
-            dispose();
-            new eventCreateScreen().setVisible(true);
-        });
-
-        eventTable.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int row = eventTable.rowAtPoint(e.getPoint());
-                if (e.getClickCount() == 2 && row != -1) {
-                    dispose();
-                    new eventViewScreen().setVisible(true);
-                }
-            }
+            JOptionPane.showMessageDialog(this, "Profile screen not added yet.");
         });
 
         joinEventButton.addActionListener(e -> {
@@ -95,19 +67,13 @@ public class homeScreen extends JFrame {
                     return;
                 }
 
-                int eventId;
-
                 int selectedRow = eventTable.getSelectedRow();
-                if (selectedRow != -1) {
-                    eventId = Integer.parseInt(eventTable.getValueAt(selectedRow, 0).toString());
-                } else {
-                    String eventIdText = JOptionPane.showInputDialog(this, "Enter Event ID:");
-                    if (eventIdText == null || eventIdText.trim().isEmpty()) {
-                        JOptionPane.showMessageDialog(this, "Event ID is required.");
-                        return;
-                    }
-                    eventId = Integer.parseInt(eventIdText.trim());
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(this, "Please select an event from the table first.");
+                    return;
                 }
+
+                int eventId = Integer.parseInt(eventTable.getValueAt(selectedRow, 0).toString());
 
                 String result = controller.joinEvent(athleteId, eventId);
 
@@ -128,13 +94,8 @@ public class homeScreen extends JFrame {
                 refreshEventTable();
 
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Event ID must be a number.");
+                JOptionPane.showMessageDialog(this, "Invalid event selection.");
             }
-        });
-
-        viewButton.addActionListener(e -> {
-            dispose();
-            new eventViewScreen().setVisible(true);
         });
 
         searchButton.addActionListener(e -> {
