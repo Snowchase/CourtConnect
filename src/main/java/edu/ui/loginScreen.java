@@ -1,8 +1,7 @@
 package edu.ui;
 //File Name: loginScreen.java
 //Group: 3
-//Description: UI for main login screen of application, with title,
-//login fields, login button, and register option
+//Description: UI for main login screen of application
 //Date: 2/28/26
 
 import javax.swing.*;
