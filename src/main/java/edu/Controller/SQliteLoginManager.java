@@ -4,7 +4,6 @@ import java.sql.*;
 
 //File Name: SQliteLoginManager.java
 //Group: 3
-//Edited last:
 //Date: 3/37/2026
 //Description: This class manages all data requests to SQlite regarding login and returns data to the controller
 public class SQliteLoginManager {
@@ -17,6 +16,7 @@ public class SQliteLoginManager {
     public boolean authenticateUser(String user, String pass) {
         try {
             Connection conn = DriverManager.getConnection(DB_URL);
+
             PreparedStatement pstmt = conn.prepareStatement(
                     "SELECT 1 FROM athletes WHERE username = ? AND password = ?"
             );
@@ -30,7 +30,14 @@ public class SQliteLoginManager {
             pstmt.close();
             conn.close();
 
+            if (authenticated) {
+                System.out.println("User authenticated");
+            } else {
+                System.out.println("User not found");
+            }
+
             return authenticated;
+
         } catch (SQLException e) {
             System.out.println("Login error: " + e.getMessage());
             return false;
@@ -40,6 +47,7 @@ public class SQliteLoginManager {
     public int getAthleteId(String user, String pass) {
         try {
             Connection conn = DriverManager.getConnection(DB_URL);
+
             PreparedStatement pstmt = conn.prepareStatement(
                     "SELECT athlete_id FROM athletes WHERE username = ? AND password = ?"
             );
@@ -48,6 +56,7 @@ public class SQliteLoginManager {
 
             ResultSet rs = pstmt.executeQuery();
             int athleteId = -1;
+
             if (rs.next()) {
                 athleteId = rs.getInt("athlete_id");
             }
@@ -57,8 +66,9 @@ public class SQliteLoginManager {
             conn.close();
 
             return athleteId;
+
         } catch (SQLException e) {
-            System.out.println("getAthleteId error: " + e.getMessage());
+            System.out.println("Get athlete ID error: " + e.getMessage());
             return -1;
         }
     }
