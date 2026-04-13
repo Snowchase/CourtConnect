@@ -23,6 +23,7 @@ public class homeScreen extends JFrame {
 
     public homeScreen(int athleteId) {
         this.athleteId = athleteId;
+        System.out.println("homeScreen athleteId = " + this.athleteId);
         this.controller = new Controller();
 
         setTitle("Court Connect - Home");
