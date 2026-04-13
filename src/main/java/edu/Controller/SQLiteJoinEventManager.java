@@ -6,9 +6,7 @@ import java.util.List;
 
 //File Name: SQLiteJoinEventManager.java
 //Group: 3
-//Edited last:
 //Description: Handles join event database operations
-//Date: 
 
 public class SQLiteJoinEventManager {
 
@@ -183,31 +181,5 @@ public class SQLiteJoinEventManager {
         }
 
         return rows.toArray(new Object[0][]);
-    }
-
-    public boolean createEvent(String eventName, String sport, String eventDate, String location, String description, int maxPlayers) {
-        try {
-            Connection conn = DriverManager.getConnection(DB_URL);
-            PreparedStatement pstmt = conn.prepareStatement(
-                    "INSERT INTO sporting_events (event_name, sport, event_date, location, description, max_players, current_players) VALUES (?, ?, ?, ?, ?, ?, 0)"
-            );
-
-            pstmt.setString(1, eventName);
-            pstmt.setString(2, sport);
-            pstmt.setString(3, eventDate);
-            pstmt.setString(4, location);
-            pstmt.setString(5, description);
-            pstmt.setInt(6, maxPlayers);
-
-            pstmt.executeUpdate();
-
-            pstmt.close();
-            conn.close();
-            return true;
-
-        } catch (SQLException e) {
-            System.out.println("createEvent error: " + e.getMessage());
-            return false;
-        }
     }
 }
