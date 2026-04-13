@@ -23,7 +23,6 @@ public class homeScreen extends JFrame {
 
     public homeScreen(int athleteId) {
         this.athleteId = athleteId;
-        System.out.println("homeScreen athleteId = " + this.athleteId);
         this.controller = new Controller();
 
         setTitle("Court Connect - Home");
@@ -91,6 +90,11 @@ public class homeScreen extends JFrame {
 
         joinEventButton.addActionListener(e -> {
             try {
+                if (athleteId == -1) {
+                    JOptionPane.showMessageDialog(this, "No logged-in athlete found. Please log in again.");
+                    return;
+                }
+
                 int eventId;
 
                 int selectedRow = eventTable.getSelectedRow();
@@ -103,17 +107,6 @@ public class homeScreen extends JFrame {
                         return;
                     }
                     eventId = Integer.parseInt(eventIdText.trim());
-                }
-                
-                System.out.println("Join button athleteId = " + athleteId);
-
-                if (athleteId == -1) {
-                    String athleteIdText = JOptionPane.showInputDialog(this, "Enter Athlete ID:");
-                    if (athleteIdText == null || athleteIdText.trim().isEmpty()) {
-                        JOptionPane.showMessageDialog(this, "Athlete ID is required.");
-                        return;
-                    }
-                    athleteId = Integer.parseInt(athleteIdText.trim());
                 }
 
                 String result = controller.joinEvent(athleteId, eventId);
@@ -135,7 +128,7 @@ public class homeScreen extends JFrame {
                 refreshEventTable();
 
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Athlete ID and Event ID must be numbers.");
+                JOptionPane.showMessageDialog(this, "Event ID must be a number.");
             }
         });
 
