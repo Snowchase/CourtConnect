@@ -4,7 +4,6 @@ import java.sql.*;
 
 //File Name: SQliteRegistrationManager.java
 //Group: 3
-//Edited last:
 //Date: 3/37/2026
 //Description: This class manages all data requests to SQlite regarding registration and returns data to the controller
 public class SQliteRegistrationManager {
@@ -22,12 +21,13 @@ public class SQliteRegistrationManager {
                     "SELECT 1 FROM athletes WHERE username = ?"
             );
             checkStmt.setString(1, user);
-            ResultSet rs = checkStmt.executeQuery();
 
+            ResultSet rs = checkStmt.executeQuery();
             if (rs.next()) {
                 rs.close();
                 checkStmt.close();
                 conn.close();
+                System.out.println("Username already exists");
                 return false;
             }
 
