@@ -1,13 +1,13 @@
 package edu.ui;
 //File Name: loginScreen.java
 //Group: 3
-//Edited last:  Chase
-//Description: Initial Ui for login screen of application, Title and login boxes/login button and register option
+//Description: UI for main login screen of application, with title,
+//login fields, login button, and register option
 //Date: 2/28/26
 
 import javax.swing.*;
-import edu.Controller.Controller;
 import java.awt.*;
+import edu.Controller.Controller;
 
 public class loginScreen extends JFrame {
     private Panel loginPanel;
@@ -68,7 +68,7 @@ public class loginScreen extends JFrame {
                 return;
             }
 
-            final int athleteId = controller.login(username, password);
+            int athleteId = controller.login(username, password);
 
             if (athleteId != -1) {
                 dispose();
