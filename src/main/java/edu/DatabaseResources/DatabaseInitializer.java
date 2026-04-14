@@ -10,7 +10,7 @@ import java.sql.*;
 public class DatabaseInitializer {
     public void initializeDatabase() {
         try {
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:database.db");
+            Connection conn = DriverManager.getConnection(DatabaseConnection.DB_URL);
             System.out.println("Connection to SQLite has been established.");
 
             Statement stmt = conn.createStatement();
