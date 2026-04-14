@@ -5,11 +5,17 @@ public class Controller {
     private SQliteLoginManager loginManager;
     private SQliteRegistrationManager registrationManager;
     private SQLiteJoinEventManager joinEventManager;
-
+    //Additional Managers created
+    private SQLiteCreateEventManager createEventManager;
+    private SQLiteViewEventManager viewEventManager;
+    private SQLiteCancelEventManager cancelEventManager;
     public Controller() {
         loginManager = new SQliteLoginManager();
         registrationManager = new SQliteRegistrationManager();
         joinEventManager = new SQLiteJoinEventManager();
+        createEventManager = new SQLiteCreateEventManager();
+        viewEventManager = new SQLiteViewEventManager();
+        cancelEventManager = new SQLiteCancelEventManager();
     }
 
     public int login(String username, String password) {
@@ -47,6 +53,21 @@ public class Controller {
         } else {
             return "JOIN_FAILED";
         }
+    }
+
+    //Added methods for new managers
+    //Create, View, Cancel Events
+    public boolean createEvent(String sport, String date, String location, int maxParticipants) {
+        //return createEventManager.createEvent(sport, date, location, maxParticipants);
+        return false; // Placeholder return statement
+    }
+    public Object[][] viewEvents() {
+        //return viewEventManager.getAllEvents();
+        return new Object[0][0]; // Placeholder return statement
+    }
+    public boolean cancelEvent(int eventId) {
+        //return cancelEventManager.cancelEvent(eventId);
+        return false; // Placeholder return statement
     }
 
     public Object[][] getAllEvents() {
