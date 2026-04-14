@@ -1,24 +1,28 @@
 package edu.Controller;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import edu.DatabaseResources.DatabaseConnection;
 
 public class SQLiteJoinEventManager {
 
     public boolean eventExists(int eventId) {
-        String sql = "SELECT 1 FROM sporting_events WHERE sportingid = ?";
-
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+        try {
+            Connection conn = DriverManager.getConnection(DatabaseConnection.DB_URL);
+            PreparedStatement pstmt = conn.prepareStatement(
+                    "SELECT 1 FROM sporting_events WHERE sportingid = ?"
+            );
             pstmt.setInt(1, eventId);
-            ResultSet rs = pstmt.executeQuery();
-            return rs.next();
 
+            ResultSet rs = pstmt.executeQuery();
+            boolean exists = rs.next();
+
+            rs.close();
+            pstmt.close();
+            conn.close();
+
+            return exists;
         } catch (SQLException e) {
             System.out.println("eventExists error: " + e.getMessage());
             return false;
@@ -26,22 +30,27 @@ public class SQLiteJoinEventManager {
     }
 
     public boolean isEventFull(int eventId) {
-        String sql = "SELECT current_players, max_players FROM sporting_events WHERE sportingid = ?";
-
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+        try {
+            Connection conn = DriverManager.getConnection(DatabaseConnection.DB_URL);
+            PreparedStatement pstmt = conn.prepareStatement(
+                    "SELECT current_players, max_players FROM sporting_events WHERE sportingid = ?"
+            );
             pstmt.setInt(1, eventId);
+
             ResultSet rs = pstmt.executeQuery();
 
+            boolean full = false;
             if (rs.next()) {
                 int currentPlayers = rs.getInt("current_players");
                 int maxPlayers = rs.getInt("max_players");
-                return currentPlayers >= maxPlayers;
+                full = currentPlayers >= maxPlayers;
             }
 
-            return true;
+            rs.close();
+            pstmt.close();
+            conn.close();
 
+            return full;
         } catch (SQLException e) {
             System.out.println("isEventFull error: " + e.getMessage());
             return true;
@@ -49,15 +58,21 @@ public class SQLiteJoinEventManager {
     }
 
     public boolean athleteExists(int athleteId) {
-        String sql = "SELECT 1 FROM athletes WHERE athlete_id = ?";
-
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+        try {
+            Connection conn = DriverManager.getConnection(DatabaseConnection.DB_URL);
+            PreparedStatement pstmt = conn.prepareStatement(
+                    "SELECT 1 FROM athletes WHERE athlete_id = ?"
+            );
             pstmt.setInt(1, athleteId);
-            ResultSet rs = pstmt.executeQuery();
-            return rs.next();
 
+            ResultSet rs = pstmt.executeQuery();
+            boolean exists = rs.next();
+
+            rs.close();
+            pstmt.close();
+            conn.close();
+
+            return exists;
         } catch (SQLException e) {
             System.out.println("athleteExists error: " + e.getMessage());
             return false;
@@ -65,17 +80,22 @@ public class SQLiteJoinEventManager {
     }
 
     public boolean isAlreadyJoined(int athleteId, int eventId) {
-        String sql = "SELECT 1 FROM event_participants WHERE athlete_id = ? AND sportingid = ?";
-
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+        try {
+            Connection conn = DriverManager.getConnection(DatabaseConnection.DB_URL);
+            PreparedStatement pstmt = conn.prepareStatement(
+                    "SELECT 1 FROM event_participants WHERE athlete_id = ? AND sportingid = ?"
+            );
             pstmt.setInt(1, athleteId);
             pstmt.setInt(2, eventId);
 
             ResultSet rs = pstmt.executeQuery();
-            return rs.next();
+            boolean alreadyJoined = rs.next();
 
+            rs.close();
+            pstmt.close();
+            conn.close();
+
+            return alreadyJoined;
         } catch (SQLException e) {
             System.out.println("isAlreadyJoined error: " + e.getMessage());
             return false;
@@ -83,32 +103,35 @@ public class SQLiteJoinEventManager {
     }
 
     public boolean addParticipant(int athleteId, int eventId) {
-        String insertSql = "INSERT INTO event_participants (athlete_id, sportingid) VALUES (?, ?)";
-        String updateSql = "UPDATE sporting_events SET current_players = current_players + 1 WHERE sportingid = ?";
-
         Connection conn = null;
+        PreparedStatement insertParticipant = null;
+        PreparedStatement updateEventCount = null;
 
         try {
-            conn = DatabaseManager.getConnection();
+            conn = DriverManager.getConnection(DatabaseConnection.DB_URL);
             conn.setAutoCommit(false);
 
-            try (PreparedStatement insertParticipant = conn.prepareStatement(insertSql);
-                 PreparedStatement updateEventCount = conn.prepareStatement(updateSql)) {
+            insertParticipant = conn.prepareStatement(
+                    "INSERT INTO event_participants (athlete_id, sportingid) VALUES (?, ?)"
+            );
+            insertParticipant.setInt(1, athleteId);
+            insertParticipant.setInt(2, eventId);
+            insertParticipant.executeUpdate();
 
-                insertParticipant.setInt(1, athleteId);
-                insertParticipant.setInt(2, eventId);
-                insertParticipant.executeUpdate();
+            updateEventCount = conn.prepareStatement(
+                    "UPDATE sporting_events SET current_players = current_players + 1 WHERE sportingid = ?"
+            );
+            updateEventCount.setInt(1, eventId);
+            updateEventCount.executeUpdate();
 
-                updateEventCount.setInt(1, eventId);
-                updateEventCount.executeUpdate();
-
-                conn.commit();
-                return true;
-            }
+            conn.commit();
+            return true;
 
         } catch (SQLException e) {
             try {
-                if (conn != null) conn.rollback();
+                if (conn != null) {
+                    conn.rollback();
+                }
             } catch (SQLException rollbackException) {
                 System.out.println("Rollback error: " + rollbackException.getMessage());
             }
@@ -118,6 +141,8 @@ public class SQLiteJoinEventManager {
 
         } finally {
             try {
+                if (insertParticipant != null) insertParticipant.close();
+                if (updateEventCount != null) updateEventCount.close();
                 if (conn != null) conn.close();
             } catch (SQLException e) {
                 System.out.println("Closing error: " + e.getMessage());
@@ -128,15 +153,12 @@ public class SQLiteJoinEventManager {
     public Object[][] getAllEvents() {
         List<Object[]> rows = new ArrayList<>();
 
-        String sql = """
-            SELECT sportingid, sport, event_date, location, current_players, max_players
-            FROM sporting_events
-            ORDER BY sportingid
-        """;
-
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+        try {
+            Connection conn = DriverManager.getConnection(DatabaseConnection.DB_URL);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(
+                    "SELECT sportingid, sport, event_date, location, current_players, max_players FROM sporting_events ORDER BY sportingid"
+            );
 
             while (rs.next()) {
                 rows.add(new Object[]{
@@ -148,6 +170,10 @@ public class SQLiteJoinEventManager {
                         rs.getInt("max_players")
                 });
             }
+
+            rs.close();
+            stmt.close();
+            conn.close();
 
         } catch (SQLException e) {
             System.out.println("getAllEvents error: " + e.getMessage());
