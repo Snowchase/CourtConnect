@@ -1,35 +1,30 @@
 package edu.ui;
-//File Name: loginScreen.java
-//Group: 3
-//Description: UI for main login screen of application
-//Date: 2/28/26
 
 import javax.swing.*;
 import java.awt.*;
 import edu.Controller.Controller;
 
 public class loginScreen extends JFrame {
-    private Panel loginPanel;
+    private JPanel loginPanel;
     private Controller controller;
 
     public loginScreen() {
         controller = new Controller();
 
         setTitle("Court Connect");
-        setSize(400, 300);
+        setSize(420, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        loginPanel = new Panel();
-        loginPanel.setLayout(new GridBagLayout());
+        loginPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
         JLabel titleLabel = new JLabel("Welcome to Court Connect");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(12, 12, 12, 12);
         loginPanel.add(titleLabel, gbc);
 
         JLabel usernameLabel = new JLabel("Username:");
@@ -40,7 +35,6 @@ public class loginScreen extends JFrame {
 
         JTextField usernameField = new JTextField(15);
         gbc.gridx = 1;
-        gbc.gridy = 1;
         loginPanel.add(usernameField, gbc);
 
         JLabel passwordLabel = new JLabel("Password:");
@@ -50,13 +44,22 @@ public class loginScreen extends JFrame {
 
         JPasswordField passwordField = new JPasswordField(15);
         gbc.gridx = 1;
-        gbc.gridy = 2;
         loginPanel.add(passwordField, gbc);
 
         JButton loginButton = new JButton("Login");
         gbc.gridx = 0;
         gbc.gridy = 3;
         loginPanel.add(loginButton, gbc);
+
+        JButton registerButton = new JButton("Register");
+        gbc.gridx = 1;
+        loginPanel.add(registerButton, gbc);
+
+        JLabel versionLabel = new JLabel("Version 1.0");
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        loginPanel.add(versionLabel, gbc);
 
         loginButton.addActionListener(e -> {
             String username = usernameField.getText().trim();
@@ -77,20 +80,10 @@ public class loginScreen extends JFrame {
             }
         });
 
-        JButton registerButton = new JButton("Register");
-        gbc.gridx = 1;
-        gbc.gridy = 3;
-        loginPanel.add(registerButton, gbc);
-
         registerButton.addActionListener(e -> {
             dispose();
             new registrationScreen().setVisible(true);
         });
-
-        JLabel versionLabel = new JLabel("Version 1.0");
-        gbc.gridx = 1;
-        gbc.gridy = 4;
-        loginPanel.add(versionLabel, gbc);
 
         add(loginPanel);
     }
