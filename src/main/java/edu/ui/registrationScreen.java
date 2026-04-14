@@ -1,36 +1,30 @@
 package edu.ui;
-//File Name: registrationScreen.java
-//Group: 3
-//Edited last:  Chase
-//Description: Ui for registration screen of application. Includes fields for username, password, confirm password, register button, and back button to login screen.
-//Date: 2/28/26
 
 import javax.swing.*;
 import java.awt.*;
 import edu.Controller.Controller;
 
 public class registrationScreen extends JFrame {
-    private Panel registrationPanel;
+    private JPanel registrationPanel;
     private Controller controller;
 
     public registrationScreen() {
         controller = new Controller();
 
         setTitle("Court Connect - Registration");
-        setSize(400, 300);
+        setSize(420, 320);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        registrationPanel = new Panel();
-        registrationPanel.setLayout(new GridBagLayout());
+        registrationPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
         JLabel titleLabel = new JLabel("Register for Court Connect");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(12, 12, 12, 12);
         registrationPanel.add(titleLabel, gbc);
 
         JLabel usernameLabel = new JLabel("Username:");
@@ -41,7 +35,6 @@ public class registrationScreen extends JFrame {
 
         JTextField usernameField = new JTextField(15);
         gbc.gridx = 1;
-        gbc.gridy = 1;
         registrationPanel.add(usernameField, gbc);
 
         JLabel passwordLabel = new JLabel("Password:");
@@ -51,7 +44,6 @@ public class registrationScreen extends JFrame {
 
         JPasswordField passwordField = new JPasswordField(15);
         gbc.gridx = 1;
-        gbc.gridy = 2;
         registrationPanel.add(passwordField, gbc);
 
         JLabel confirmPasswordLabel = new JLabel("Confirm Password:");
@@ -61,7 +53,6 @@ public class registrationScreen extends JFrame {
 
         JPasswordField confirmPasswordField = new JPasswordField(15);
         gbc.gridx = 1;
-        gbc.gridy = 3;
         registrationPanel.add(confirmPasswordField, gbc);
 
         JButton registerButton = new JButton("Register");
@@ -71,7 +62,6 @@ public class registrationScreen extends JFrame {
 
         JButton backButton = new JButton("Back");
         gbc.gridx = 1;
-        gbc.gridy = 4;
         registrationPanel.add(backButton, gbc);
 
         backButton.addActionListener(e -> {
