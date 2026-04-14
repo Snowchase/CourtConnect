@@ -4,10 +4,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.ResultSet;
 
 public class DatabaseManager {
 
-    // Change this path if needed, but keep it consistent everywhere
     private static final String DB_URL = "jdbc:sqlite:CourtConnect.db";
 
     public static Connection getConnection() throws SQLException {
@@ -18,7 +18,6 @@ public class DatabaseManager {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
 
-            // Create athletes table
             stmt.execute("""
                 CREATE TABLE IF NOT EXISTS athletes (
                     athlete_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,7 +26,6 @@ public class DatabaseManager {
                 )
             """);
 
-            // Create sporting events table
             stmt.execute("""
                 CREATE TABLE IF NOT EXISTS sporting_events (
                     sportingid INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,7 +37,6 @@ public class DatabaseManager {
                 )
             """);
 
-            // Create event participants table
             stmt.execute("""
                 CREATE TABLE IF NOT EXISTS event_participants (
                     athlete_id INTEGER NOT NULL,
@@ -50,8 +47,7 @@ public class DatabaseManager {
                 )
             """);
 
-            // Seed events only if empty
-            var rs = stmt.executeQuery("SELECT COUNT(*) AS count FROM sporting_events");
+            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS count FROM sporting_events");
             int count = rs.getInt("count");
             rs.close();
 
