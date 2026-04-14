@@ -7,6 +7,7 @@ public class Controller {
     private SQLiteJoinEventManager joinEventManager;
 
     public Controller() {
+        DatabaseManager.initializeDatabase();
         loginManager = new SQliteLoginManager();
         registrationManager = new SQliteRegistrationManager();
         joinEventManager = new SQLiteJoinEventManager();
