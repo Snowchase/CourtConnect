@@ -5,12 +5,16 @@ public class Controller {
     private SQliteLoginManager loginManager;
     private SQliteRegistrationManager registrationManager;
     private SQLiteJoinEventManager joinEventManager;
+    private SQLiteProfileManager profileManager;
+    private SQLiteEventCreateManager eventCreateManager;
 
     public Controller() {
         DatabaseManager.initializeDatabase();
         loginManager = new SQliteLoginManager();
         registrationManager = new SQliteRegistrationManager();
         joinEventManager = new SQLiteJoinEventManager();
+        profileManager = new SQLiteProfileManager();
+        eventCreateManager = new SQLiteEventCreateManager();
     }
 
     public int login(String username, String password) {
@@ -50,7 +54,45 @@ public class Controller {
         }
     }
 
+    public String leaveEvent(int athleteId, int eventId) {
+        if (!joinEventManager.athleteExists(athleteId)) {
+            return "ATHLETE_NOT_FOUND";
+        }
+
+        if (!joinEventManager.eventExists(eventId)) {
+            return "EVENT_NOT_FOUND";
+        }
+
+        if (!joinEventManager.isAlreadyJoined(athleteId, eventId)) {
+            return "NOT_JOINED";
+        }
+
+        boolean success = joinEventManager.leaveEvent(athleteId, eventId);
+
+        if (success) {
+            return "SUCCESS";
+        } else {
+            return "LEAVE_FAILED";
+        }
+    }
+
     public Object[][] getAllEvents() {
         return joinEventManager.getAllEvents();
+    }
+
+    public Object[][] getJoinedEventsForAthlete(int athleteId) {
+        return joinEventManager.getJoinedEventsForAthlete(athleteId);
+    }
+
+    public Object[] getAthleteProfile(int athleteId) {
+        return profileManager.getAthleteProfile(athleteId);
+    }
+
+    public boolean updateAthleteProfile(int athleteId, String name, int age, String skillLevel, String sex) {
+        return profileManager.updateAthleteProfile(athleteId, name, age, skillLevel, sex);
+    }
+
+    public boolean createEvent(String eventName, String sport, String eventDate, String location, String description, int maxPlayers) {
+        return eventCreateManager.createEvent(eventName, sport, eventDate, location, description, maxPlayers);
     }
 }

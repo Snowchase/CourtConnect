@@ -1,7 +1,9 @@
 package edu.Controller;
 
-import java.sql.*;
-import edu.DatabaseResources.DatabaseConnection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class SQliteLoginManager {
 
@@ -10,24 +12,9 @@ public class SQliteLoginManager {
 
     public boolean authenticateUser(String user, String pass) {
         try {
-            Connection conn = DriverManager.getConnection(DatabaseConnection.DB_URL);
+            Connection conn = DatabaseManager.getConnection();
 
-            System.out.println("LOGIN CHECK DB_URL = " + DatabaseConnection.DB_URL);
             System.out.println("Trying login for username = " + user);
-
-            Statement stmt = conn.createStatement();
-            ResultSet allUsers = stmt.executeQuery("SELECT athlete_id, username, password FROM athletes");
-
-            System.out.println("Current athletes in DB:");
-            while (allUsers.next()) {
-                System.out.println(
-                        "athlete_id=" + allUsers.getInt("athlete_id") +
-                        ", username=" + allUsers.getString("username") +
-                        ", password=" + allUsers.getString("password")
-                );
-            }
-            allUsers.close();
-            stmt.close();
 
             PreparedStatement pstmt = conn.prepareStatement(
                     "SELECT 1 FROM athletes WHERE username = ? AND password = ?"
@@ -53,7 +40,7 @@ public class SQliteLoginManager {
 
     public int getAthleteId(String user, String pass) {
         try {
-            Connection conn = DriverManager.getConnection(DatabaseConnection.DB_URL);
+            Connection conn = DatabaseManager.getConnection();
 
             PreparedStatement pstmt = conn.prepareStatement(
                     "SELECT athlete_id FROM athletes WHERE username = ? AND password = ?"

@@ -1,9 +1,3 @@
-//File Name: eventCreateScreen.java
-//Group: 3
-//Edited last:  Chase
-//Description: Event creation screen for application. Includes fields for event details and creation options.
-//Date: 2/21/26
-
 package edu.ui;
 
 import javax.swing.*;
@@ -13,13 +7,15 @@ import edu.Controller.Controller;
 public class eventCreateScreen extends JFrame {
     private JPanel eventCreatePanel;
     private Controller eventCreateController;
+    private int athleteId;
 
-    public eventCreateScreen() {
+    public eventCreateScreen(int athleteId) {
+        this.athleteId = athleteId;
         this.eventCreateController = new Controller();
 
         setTitle("Court Connect - Create Event");
         setSize(500, 450);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
         eventCreatePanel = new JPanel(new GridBagLayout());
@@ -41,7 +37,7 @@ public class eventCreateScreen extends JFrame {
         JTextField eventLocationField = new JTextField(20);
         JTextField maxPlayersField = new JTextField(10);
 
-        String[] sports = {"Basketball", "Soccer", "Tennis", "Volleyball"};
+        String[] sports = {"Basketball", "Soccer", "Tennis", "Volleyball", "Badminton"};
         JComboBox<String> sportComboBox = new JComboBox<>(sports);
 
         int row = 1;
@@ -109,7 +105,7 @@ public class eventCreateScreen extends JFrame {
                 String sport = sportComboBox.getSelectedItem().toString();
                 int maxPlayers = Integer.parseInt(maxPlayersField.getText().trim());
 
-                if (eventName.isEmpty() || eventDate.isEmpty() || location.isEmpty()) {
+                if (eventName.isEmpty() || eventDate.isEmpty() || location.isEmpty() || description.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "Please fill in all required fields.");
                     return;
                 }
@@ -121,7 +117,7 @@ public class eventCreateScreen extends JFrame {
                 if (created) {
                     JOptionPane.showMessageDialog(this, "Event created successfully.");
                     dispose();
-                    new homeScreen().setVisible(true);
+                    new homeScreen(athleteId).setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(this, "Failed to create event.");
                 }
@@ -133,9 +129,7 @@ public class eventCreateScreen extends JFrame {
 
         cancelButton.addActionListener(e -> {
             dispose();
-            new homeScreen().setVisible(true);
+            new homeScreen(athleteId).setVisible(true);
         });
-
-        setVisible(true);
     }
 }

@@ -1,7 +1,9 @@
 package edu.Controller;
 
-import java.sql.*;
-import edu.DatabaseResources.DatabaseConnection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class SQliteRegistrationManager {
 
@@ -10,7 +12,7 @@ public class SQliteRegistrationManager {
 
     public boolean registerAthlete(String user, String pass) {
         try {
-            Connection conn = DriverManager.getConnection(DatabaseConnection.DB_URL);
+            Connection conn = DatabaseManager.getConnection();
 
             PreparedStatement checkStmt = conn.prepareStatement(
                     "SELECT 1 FROM athletes WHERE username = ?"
