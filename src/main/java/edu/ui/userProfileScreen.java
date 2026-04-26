@@ -13,8 +13,6 @@ public class userProfileScreen extends JFrame {
         this.athleteId = athleteId;
         this.userProfileController = new Controller();
 
-        System.out.println("Opening profile screen with athleteId = " + athleteId);
-
         setTitle("Court Connect - Athlete Profile");
         setSize(450, 350);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -45,8 +43,6 @@ public class userProfileScreen extends JFrame {
             ageText = profile[2] != null ? profile[2].toString() : "";
             skillLevel = profile[3] != null ? profile[3].toString() : "";
             sex = profile[4] != null ? profile[4].toString() : "";
-        } else {
-            System.out.println("Profile lookup returned null for athleteId = " + athleteId);
         }
 
         JTextField usernameField = new JTextField(username, 20);
@@ -113,9 +109,9 @@ public class userProfileScreen extends JFrame {
         updateButton.addActionListener(e -> {
             try {
                 if (athleteId == -1) {
-    JOptionPane.showMessageDialog(this, "No valid athlete profile is loaded.");
-    return;
-}
+                    JOptionPane.showMessageDialog(this, "No valid athlete profile is loaded.");
+                    return;
+                }
 
                 String updatedName = nameField.getText().trim();
                 String updatedSkillLevel = skillLevelField.getText().trim();
@@ -133,8 +129,6 @@ public class userProfileScreen extends JFrame {
                         athleteId, updatedName, updatedAge, updatedSkillLevel, updatedSex
                 );
 
-                System.out.println("Update attempted for athleteId = " + athleteId + ", success = " + updated);
-
                 if (updated) {
                     JOptionPane.showMessageDialog(this, "Profile updated successfully.");
                 } else {
@@ -148,7 +142,7 @@ public class userProfileScreen extends JFrame {
 
         backButton.addActionListener(e -> {
             dispose();
-            new homeScreen(athleteId).setVisible(true);
+            new loginScreen().setVisible(true);
         });
 
         add(userProfilePanel);

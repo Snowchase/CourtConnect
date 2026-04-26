@@ -73,8 +73,9 @@ public class loginScreen extends JFrame {
             int athleteId = controller.login(username, password);
 
             if (athleteId != -1) {
+                String role = controller.getUserRole(username, password);
                 dispose();
-                new homeScreen(athleteId).setVisible(true);
+                new homeScreen(athleteId, role).setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid username or password.");
             }

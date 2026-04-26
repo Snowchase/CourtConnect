@@ -10,7 +10,7 @@ public class SQliteRegistrationManager {
     public SQliteRegistrationManager() {
     }
 
-    public boolean registerAthlete(String user, String pass) {
+    public boolean registerAthlete(String user, String pass, String role) {
         try {
             Connection conn = DatabaseManager.getConnection();
 
@@ -32,10 +32,11 @@ public class SQliteRegistrationManager {
             checkStmt.close();
 
             PreparedStatement pstmt = conn.prepareStatement(
-                    "INSERT INTO athletes (username, password) VALUES (?, ?)"
+                    "INSERT INTO athletes (username, password, role) VALUES (?, ?, ?)"
             );
             pstmt.setString(1, user);
             pstmt.setString(2, pass);
+            pstmt.setString(3, role);
             pstmt.executeUpdate();
 
             pstmt.close();

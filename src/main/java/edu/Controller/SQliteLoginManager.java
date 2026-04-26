@@ -14,8 +14,6 @@ public class SQliteLoginManager {
         try {
             Connection conn = DatabaseManager.getConnection();
 
-            System.out.println("Trying login for username = " + user);
-
             PreparedStatement pstmt = conn.prepareStatement(
                     "SELECT 1 FROM athletes WHERE username = ? AND password = ?"
             );
@@ -29,7 +27,6 @@ public class SQliteLoginManager {
             pstmt.close();
             conn.close();
 
-            System.out.println("Authenticated = " + authenticated);
             return authenticated;
 
         } catch (SQLException e) {
@@ -59,12 +56,40 @@ public class SQliteLoginManager {
             pstmt.close();
             conn.close();
 
-            System.out.println("Resolved athleteId = " + athleteId);
             return athleteId;
 
         } catch (SQLException e) {
             System.out.println("Get athlete ID error: " + e.getMessage());
             return -1;
+        }
+    }
+
+    public String getUserRole(String user, String pass) {
+        try {
+            Connection conn = DatabaseManager.getConnection();
+
+            PreparedStatement pstmt = conn.prepareStatement(
+                    "SELECT role FROM athletes WHERE username = ? AND password = ?"
+            );
+            pstmt.setString(1, user);
+            pstmt.setString(2, pass);
+
+            ResultSet rs = pstmt.executeQuery();
+            String role = "Athlete";
+
+            if (rs.next()) {
+                role = rs.getString("role");
+            }
+
+            rs.close();
+            pstmt.close();
+            conn.close();
+
+            return role;
+
+        } catch (SQLException e) {
+            System.out.println("Get role error: " + e.getMessage());
+            return "Athlete";
         }
     }
 }

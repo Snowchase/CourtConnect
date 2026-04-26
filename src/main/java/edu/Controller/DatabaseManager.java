@@ -22,6 +22,7 @@ public class DatabaseManager {
                     "athlete_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "username TEXT NOT NULL UNIQUE, " +
                     "password TEXT NOT NULL, " +
+                    "role TEXT NOT NULL DEFAULT 'Athlete', " +
                     "name TEXT, " +
                     "age INTEGER, " +
                     "skill_level TEXT, " +
@@ -36,7 +37,9 @@ public class DatabaseManager {
                     "location TEXT NOT NULL, " +
                     "description TEXT, " +
                     "current_players INTEGER NOT NULL DEFAULT 0, " +
-                    "max_players INTEGER NOT NULL" +
+                    "max_players INTEGER NOT NULL, " +
+                    "created_by INTEGER, " +
+                    "FOREIGN KEY (created_by) REFERENCES athletes(athlete_id)" +
                     ")");
 
             stmt.execute("CREATE TABLE IF NOT EXISTS event_participants (" +
@@ -52,12 +55,12 @@ public class DatabaseManager {
             rs.close();
 
             if (count == 0) {
-                stmt.execute("INSERT INTO sporting_events (event_name, sport, event_date, location, description, current_players, max_players) VALUES " +
-                        "('City Arena Pickup', 'Basketball', '2026-04-20', 'San Marcos Gym', 'Casual basketball run', 0, 10)," +
-                        "('Campus Soccer Match', 'Soccer', '2026-04-21', 'CSUSM Field', 'Friendly soccer game', 0, 14)," +
-                        "('Weekend Tennis Rally', 'Tennis', '2026-04-22', 'North County Courts', 'Practice and rally session', 0, 4)," +
-                        "('Beach Volleyball Meetup', 'Volleyball', '2026-04-23', 'Carlsbad Beach Courts', 'Fun volleyball meetup', 0, 12)," +
-                        "('Rec Center Badminton', 'Badminton', '2026-04-24', 'Rec Center Hall', 'Indoor badminton session', 0, 6)");
+                stmt.execute("INSERT INTO sporting_events (event_name, sport, event_date, location, description, current_players, max_players, created_by) VALUES " +
+                        "('City Arena Pickup', 'Basketball', '2026-04-20', 'San Marcos Gym', 'Casual basketball run', 0, 10, NULL)," +
+                        "('Campus Soccer Match', 'Soccer', '2026-04-21', 'CSUSM Field', 'Friendly soccer game', 0, 14, NULL)," +
+                        "('Weekend Tennis Rally', 'Tennis', '2026-04-22', 'North County Courts', 'Practice and rally session', 0, 4, NULL)," +
+                        "('Beach Volleyball Meetup', 'Volleyball', '2026-04-23', 'Carlsbad Beach Courts', 'Fun volleyball meetup', 0, 12, NULL)," +
+                        "('Rec Center Badminton', 'Badminton', '2026-04-24', 'Rec Center Hall', 'Indoor badminton session', 0, 6, NULL)");
             }
 
             System.out.println("Database initialized successfully.");

@@ -8,9 +8,11 @@ public class eventCreateScreen extends JFrame {
     private JPanel eventCreatePanel;
     private Controller eventCreateController;
     private int athleteId;
+    private String role;
 
-    public eventCreateScreen(int athleteId) {
+    public eventCreateScreen(int athleteId, String role) {
         this.athleteId = athleteId;
+        this.role = role;
         this.eventCreateController = new Controller();
 
         setTitle("Court Connect - Create Event");
@@ -20,6 +22,7 @@ public class eventCreateScreen extends JFrame {
 
         eventCreatePanel = new JPanel(new GridBagLayout());
         eventCreatePanel.setBackground(Color.WHITE);
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -105,19 +108,19 @@ public class eventCreateScreen extends JFrame {
                 String sport = sportComboBox.getSelectedItem().toString();
                 int maxPlayers = Integer.parseInt(maxPlayersField.getText().trim());
 
-                if (eventName.isEmpty() || eventDate.isEmpty() || location.isEmpty() || description.isEmpty()) {
+                if (eventName.isEmpty() || description.isEmpty() || eventDate.isEmpty() || location.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "Please fill in all required fields.");
                     return;
                 }
 
                 boolean created = eventCreateController.createEvent(
-                        eventName, sport, eventDate, location, description, maxPlayers
+                        eventName, sport, eventDate, location, description, maxPlayers, athleteId
                 );
 
                 if (created) {
                     JOptionPane.showMessageDialog(this, "Event created successfully.");
                     dispose();
-                    new homeScreen(athleteId).setVisible(true);
+                    new homeScreen(athleteId, role).setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(this, "Failed to create event.");
                 }
@@ -129,7 +132,7 @@ public class eventCreateScreen extends JFrame {
 
         cancelButton.addActionListener(e -> {
             dispose();
-            new homeScreen(athleteId).setVisible(true);
+            new homeScreen(athleteId, role).setVisible(true);
         });
     }
 }

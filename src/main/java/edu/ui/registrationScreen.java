@@ -12,7 +12,7 @@ public class registrationScreen extends JFrame {
         controller = new Controller();
 
         setTitle("Court Connect - Registration");
-        setSize(420, 320);
+        setSize(450, 360);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -55,9 +55,19 @@ public class registrationScreen extends JFrame {
         gbc.gridx = 1;
         registrationPanel.add(confirmPasswordField, gbc);
 
-        JButton registerButton = new JButton("Register");
+        JLabel roleLabel = new JLabel("Role:");
         gbc.gridx = 0;
         gbc.gridy = 4;
+        registrationPanel.add(roleLabel, gbc);
+
+        String[] roles = {"Athlete", "Organizer"};
+        JComboBox<String> roleComboBox = new JComboBox<>(roles);
+        gbc.gridx = 1;
+        registrationPanel.add(roleComboBox, gbc);
+
+        JButton registerButton = new JButton("Register");
+        gbc.gridx = 0;
+        gbc.gridy = 5;
         registrationPanel.add(registerButton, gbc);
 
         JButton backButton = new JButton("Back");
@@ -73,6 +83,7 @@ public class registrationScreen extends JFrame {
             String username = usernameField.getText().trim();
             String password = new String(passwordField.getPassword()).trim();
             String confirmPassword = new String(confirmPasswordField.getPassword()).trim();
+            String role = roleComboBox.getSelectedItem().toString();
 
             if (username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "All fields are required.");
@@ -84,7 +95,7 @@ public class registrationScreen extends JFrame {
                 return;
             }
 
-            boolean registered = controller.register(username, password);
+            boolean registered = controller.register(username, password, role);
 
             if (registered) {
                 JOptionPane.showMessageDialog(this, "Registration successful. Please log in.");

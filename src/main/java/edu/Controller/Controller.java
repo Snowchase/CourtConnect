@@ -24,56 +24,31 @@ public class Controller {
         return -1;
     }
 
-    public boolean register(String username, String password) {
-        return registrationManager.registerAthlete(username, password);
+    public String getUserRole(String username, String password) {
+        return loginManager.getUserRole(username, password);
+    }
+
+    public boolean register(String username, String password, String role) {
+        return registrationManager.registerAthlete(username, password, role);
     }
 
     public String joinEvent(int athleteId, int eventId) {
-        if (!joinEventManager.athleteExists(athleteId)) {
-            return "ATHLETE_NOT_FOUND";
-        }
-
-        if (!joinEventManager.eventExists(eventId)) {
-            return "EVENT_NOT_FOUND";
-        }
-
-        if (joinEventManager.isEventFull(eventId)) {
-            return "EVENT_FULL";
-        }
-
-        if (joinEventManager.isAlreadyJoined(athleteId, eventId)) {
-            return "ALREADY_JOINED";
-        }
+        if (!joinEventManager.athleteExists(athleteId)) return "ATHLETE_NOT_FOUND";
+        if (!joinEventManager.eventExists(eventId)) return "EVENT_NOT_FOUND";
+        if (joinEventManager.isEventFull(eventId)) return "EVENT_FULL";
+        if (joinEventManager.isAlreadyJoined(athleteId, eventId)) return "ALREADY_JOINED";
 
         boolean success = joinEventManager.addParticipant(athleteId, eventId);
-
-        if (success) {
-            return "SUCCESS";
-        } else {
-            return "JOIN_FAILED";
-        }
+        return success ? "SUCCESS" : "JOIN_FAILED";
     }
 
     public String leaveEvent(int athleteId, int eventId) {
-        if (!joinEventManager.athleteExists(athleteId)) {
-            return "ATHLETE_NOT_FOUND";
-        }
-
-        if (!joinEventManager.eventExists(eventId)) {
-            return "EVENT_NOT_FOUND";
-        }
-
-        if (!joinEventManager.isAlreadyJoined(athleteId, eventId)) {
-            return "NOT_JOINED";
-        }
+        if (!joinEventManager.athleteExists(athleteId)) return "ATHLETE_NOT_FOUND";
+        if (!joinEventManager.eventExists(eventId)) return "EVENT_NOT_FOUND";
+        if (!joinEventManager.isAlreadyJoined(athleteId, eventId)) return "NOT_JOINED";
 
         boolean success = joinEventManager.leaveEvent(athleteId, eventId);
-
-        if (success) {
-            return "SUCCESS";
-        } else {
-            return "LEAVE_FAILED";
-        }
+        return success ? "SUCCESS" : "LEAVE_FAILED";
     }
 
     public Object[][] getAllEvents() {
@@ -92,7 +67,17 @@ public class Controller {
         return profileManager.updateAthleteProfile(athleteId, name, age, skillLevel, sex);
     }
 
-    public boolean createEvent(String eventName, String sport, String eventDate, String location, String description, int maxPlayers) {
-        return eventCreateManager.createEvent(eventName, sport, eventDate, location, description, maxPlayers);
+    public boolean createEvent(String eventName, String sport, String eventDate, String location,
+                               String description, int maxPlayers, int createdBy) {
+        return eventCreateManager.createEvent(eventName, sport, eventDate, location, description, maxPlayers, createdBy);
+    }
+
+    public String deleteEvent(int eventId, int organizerId) {
+        if (!eventCreateManager.isEventCreatedByOrganizer(eventId, organizerId)) {
+            return "NOT_OWNER";
+        }
+
+        boolean deleted = eventCreateManager.deleteEvent(eventId, organizerId);
+        return deleted ? "SUCCESS" : "DELETE_FAILED";
     }
 }
