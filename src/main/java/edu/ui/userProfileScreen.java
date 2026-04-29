@@ -1,135 +1,114 @@
 package edu.ui;
 
-import edu.Controller.Controller;
-import java.awt.*;
 import javax.swing.*;
+import java.awt.*;
+import edu.Controller.Controller;
 
 public class userProfileScreen extends JFrame {
-    private JPanel userProfilePanel;
-    private Controller userProfileController;
-    private int athleteId;
 
-    public userProfileScreen(int athleteId) {
+    private Controller controller;
+    private int athleteId;
+    private String role;
+
+    public userProfileScreen(int athleteId, String role) {
         this.athleteId = athleteId;
-        this.userProfileController = new Controller();
+        this.role = role;
+        this.controller = new Controller();
+
+        Color backgroundColor = new Color(245, 247, 250);
+        Color primaryColor = new Color(52, 152, 219);
+        Color headerColor = new Color(44, 62, 80);
 
         setTitle("Court Connect - Athlete Profile");
-        setSize(450, 350);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setSize(500, 400);
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        userProfilePanel = new JPanel(new GridBagLayout());
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(backgroundColor);
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         JLabel titleLabel = new JLabel("Athlete Profile");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titleLabel.setForeground(headerColor);
 
-        Object[] profile = null;
-        if (athleteId != -1) {
-            profile = userProfileController.getAthleteProfile(athleteId);
-        }
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        panel.add(titleLabel, gbc);
 
-        String username = "";
-        String name = "";
-        String ageText = "";
-        String skillLevel = "";
-        String sex = "";
+        JTextField usernameField = new JTextField(20);
+        JTextField nameField = new JTextField(20);
+        JTextField ageField = new JTextField(20);
+        JTextField skillField = new JTextField(20);
+        JTextField sexField = new JTextField(20);
+
+        Object[] profile = controller.getAthleteProfile(athleteId);
 
         if (profile != null) {
-            username = profile[0] != null ? profile[0].toString() : "";
-            name = profile[1] != null ? profile[1].toString() : "";
-            ageText = profile[2] != null ? profile[2].toString() : "";
-            skillLevel = profile[3] != null ? profile[3].toString() : "";
-            sex = profile[4] != null ? profile[4].toString() : "";
+            usernameField.setText(profile[0] != null ? profile[0].toString() : "");
+            nameField.setText(profile[1] != null ? profile[1].toString() : "");
+            ageField.setText(profile[2] != null ? profile[2].toString() : "");
+            skillField.setText(profile[3] != null ? profile[3].toString() : "");
+            sexField.setText(profile[4] != null ? profile[4].toString() : "");
         }
 
-        JTextField usernameField = new JTextField(username, 20);
         usernameField.setEditable(false);
 
-        JTextField nameField = new JTextField(name, 20);
-        JTextField ageField = new JTextField(ageText, 20);
-        JTextField skillLevelField = new JTextField(skillLevel, 20);
-        JTextField sexField = new JTextField(sex, 20);
+        int row = 1;
+        addField(panel, gbc, row++, "Username:", usernameField, headerColor);
+        addField(panel, gbc, row++, "Name:", nameField, headerColor);
+        addField(panel, gbc, row++, "Age:", ageField, headerColor);
+        addField(panel, gbc, row++, "Skill Level:", skillField, headerColor);
+        addField(panel, gbc, row++, "Sex:", sexField, headerColor);
 
         JButton updateButton = new JButton("Update Profile");
         JButton backButton = new JButton("Back");
 
-        int row = 0;
+        Font buttonFont = new Font("Arial", Font.BOLD, 14);
+
+        updateButton.setFont(buttonFont);
+        updateButton.setBackground(primaryColor);
+        updateButton.setForeground(Color.WHITE);
+        updateButton.setFocusPainted(false);
+
+        backButton.setFont(buttonFont);
+        backButton.setBackground(primaryColor);
+        backButton.setForeground(Color.WHITE);
+        backButton.setFocusPainted(false);
 
         gbc.gridx = 0;
         gbc.gridy = row;
-        gbc.gridwidth = 2;
-        userProfilePanel.add(titleLabel, gbc);
-
-        row++;
         gbc.gridwidth = 1;
-        gbc.gridx = 0;
-        gbc.gridy = row;
-        userProfilePanel.add(new JLabel("Username:"), gbc);
-        gbc.gridx = 1;
-        userProfilePanel.add(usernameField, gbc);
+        panel.add(updateButton, gbc);
 
-        row++;
-        gbc.gridx = 0;
-        gbc.gridy = row;
-        userProfilePanel.add(new JLabel("Name:"), gbc);
         gbc.gridx = 1;
-        userProfilePanel.add(nameField, gbc);
+        panel.add(backButton, gbc);
 
-        row++;
-        gbc.gridx = 0;
-        gbc.gridy = row;
-        userProfilePanel.add(new JLabel("Age:"), gbc);
-        gbc.gridx = 1;
-        userProfilePanel.add(ageField, gbc);
-
-        row++;
-        gbc.gridx = 0;
-        gbc.gridy = row;
-        userProfilePanel.add(new JLabel("Skill Level:"), gbc);
-        gbc.gridx = 1;
-        userProfilePanel.add(skillLevelField, gbc);
-
-        row++;
-        gbc.gridx = 0;
-        gbc.gridy = row;
-        userProfilePanel.add(new JLabel("Sex:"), gbc);
-        gbc.gridx = 1;
-        userProfilePanel.add(sexField, gbc);
-
-        row++;
-        gbc.gridx = 0;
-        gbc.gridy = row;
-        userProfilePanel.add(updateButton, gbc);
-        gbc.gridx = 1;
-        userProfilePanel.add(backButton, gbc);
+        add(panel);
 
         updateButton.addActionListener(e -> {
             try {
-                if (athleteId == -1) {
-                    JOptionPane.showMessageDialog(this, "No valid athlete profile is loaded.");
-                    return;
-                }
+                String name = nameField.getText().trim();
+                String skill = skillField.getText().trim();
+                String sex = sexField.getText().trim();
 
-                String updatedName = nameField.getText().trim();
-                String updatedSkillLevel = skillLevelField.getText().trim();
-                String updatedSex = sexField.getText().trim();
-
-                if (updatedName.isEmpty() || ageField.getText().trim().isEmpty()
-                        || updatedSkillLevel.isEmpty() || updatedSex.isEmpty()) {
+                if (name.isEmpty() || ageField.getText().trim().isEmpty()
+                        || skill.isEmpty() || sex.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "Please fill in all profile fields.");
                     return;
                 }
 
-                int updatedAge = Integer.parseInt(ageField.getText().trim());
+                int age = Integer.parseInt(ageField.getText().trim());
 
-                boolean updated = userProfileController.updateAthleteProfile(
-                        athleteId, updatedName, updatedAge, updatedSkillLevel, updatedSex
+                boolean success = controller.updateAthleteProfile(
+                        athleteId, name, age, skill, sex
                 );
 
-                if (updated) {
+                if (success) {
                     JOptionPane.showMessageDialog(this, "Profile updated successfully.");
                 } else {
                     JOptionPane.showMessageDialog(this, "Failed to update profile.");
@@ -142,9 +121,22 @@ public class userProfileScreen extends JFrame {
 
         backButton.addActionListener(e -> {
             dispose();
-            new loginScreen().setVisible(true);
+            new homeScreen(athleteId, role).setVisible(true);
         });
+    }
 
-        add(userProfilePanel);
+    private void addField(JPanel panel, GridBagConstraints gbc, int row, String labelText,
+                          JTextField field, Color labelColor) {
+        JLabel label = new JLabel(labelText);
+        label.setForeground(labelColor);
+        label.setFont(new Font("Arial", Font.BOLD, 14));
+
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.gridwidth = 1;
+        panel.add(label, gbc);
+
+        gbc.gridx = 1;
+        panel.add(field, gbc);
     }
 }

@@ -21,15 +21,23 @@ public class homeScreen extends JFrame {
         this.role = role;
         this.controller = new Controller();
 
+        Color backgroundColor = new Color(245, 247, 250);
+        Color primaryColor = new Color(52, 152, 219);
+        Color headerColor = new Color(44, 62, 80);
+        Color gridColor = new Color(220, 220, 220);
+
         setTitle("Court Connect - Home");
-        setSize(1200, 550);
+        setSize(1400, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        homePanel = new JPanel(new BorderLayout());
+        homePanel = new JPanel(new BorderLayout(10, 10));
+        homePanel.setBackground(backgroundColor);
 
         JLabel welcomeLabel = new JLabel("Welcome to Court Connect! - " + role, SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        welcomeLabel.setForeground(headerColor);
+        welcomeLabel.setBorder(BorderFactory.createEmptyBorder(12, 0, 12, 0));
 
         JButton profileButton = new JButton("Profile");
         JButton createEventButton = new JButton("Create Event");
@@ -40,7 +48,24 @@ public class homeScreen extends JFrame {
         JButton refreshButton = new JButton("Refresh");
         JButton logoutButton = new JButton("Logout");
 
-        JPanel bottomPanel = new JPanel();
+        Font buttonFont = new Font("Arial", Font.BOLD, 14);
+        JButton[] buttons = {
+                profileButton, createEventButton, deleteEventButton,
+                joinEventButton, leaveEventButton, mapButton,
+                refreshButton, logoutButton
+        };
+
+        for (JButton btn : buttons) {
+            btn.setFont(buttonFont);
+            btn.setPreferredSize(new Dimension(140, 42));
+            btn.setBackground(primaryColor);
+            btn.setForeground(Color.WHITE);
+            btn.setFocusPainted(false);
+        }
+
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 12));
+        bottomPanel.setBackground(backgroundColor);
+
         bottomPanel.add(profileButton);
         bottomPanel.add(createEventButton);
         bottomPanel.add(deleteEventButton);
@@ -51,23 +76,41 @@ public class homeScreen extends JFrame {
         bottomPanel.add(logoutButton);
 
         eventTable = new JTable();
+        eventTable.setRowHeight(32);
+        eventTable.setFont(new Font("Arial", Font.PLAIN, 15));
+        eventTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 15));
+        eventTable.setBackground(Color.WHITE);
+        eventTable.setGridColor(gridColor);
+        eventTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         refreshEventTable();
 
         notificationTable = new JTable();
+        notificationTable.setRowHeight(32);
+        notificationTable.setFont(new Font("Arial", Font.PLAIN, 15));
+        notificationTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 15));
+        notificationTable.setBackground(Color.WHITE);
+        notificationTable.setGridColor(gridColor);
+        notificationTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         refreshNotificationTable();
 
         JScrollPane eventScrollPane = new JScrollPane(eventTable);
         JScrollPane notificationScrollPane = new JScrollPane(notificationTable);
 
         JPanel notificationPanel = new JPanel(new BorderLayout());
+        notificationPanel.setBackground(backgroundColor);
+
         JLabel notificationLabel = new JLabel("My Notifications / Joined Games", SwingConstants.CENTER);
-        notificationLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        notificationLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        notificationLabel.setForeground(headerColor);
+        notificationLabel.setBorder(BorderFactory.createEmptyBorder(8, 0, 8, 0));
+
         notificationPanel.add(notificationLabel, BorderLayout.NORTH);
         notificationPanel.add(notificationScrollPane, BorderLayout.CENTER);
-        notificationPanel.setPreferredSize(new Dimension(400, 0));
+        notificationPanel.setPreferredSize(new Dimension(450, 0));
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, eventScrollPane, notificationPanel);
-        splitPane.setResizeWeight(0.7);
+        splitPane.setResizeWeight(0.75);
+        splitPane.setDividerSize(8);
 
         homePanel.add(welcomeLabel, BorderLayout.NORTH);
         homePanel.add(splitPane, BorderLayout.CENTER);
@@ -82,7 +125,7 @@ public class homeScreen extends JFrame {
 
         profileButton.addActionListener(e -> {
             dispose();
-            new userProfileScreen(athleteId).setVisible(true);
+            new userProfileScreen(athleteId, role).setVisible(true);;
         });
 
         createEventButton.addActionListener(e -> {
