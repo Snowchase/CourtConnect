@@ -1,7 +1,18 @@
 package edu.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import edu.Controller.Controller;
 
 public class userProfileScreen extends JFrame {
@@ -72,12 +83,12 @@ public class userProfileScreen extends JFrame {
 
         updateButton.setFont(buttonFont);
         updateButton.setBackground(primaryColor);
-        updateButton.setForeground(Color.WHITE);
+        updateButton.setForeground(Color.BLACK);
         updateButton.setFocusPainted(false);
 
         backButton.setFont(buttonFont);
         backButton.setBackground(primaryColor);
-        backButton.setForeground(Color.WHITE);
+        backButton.setForeground(Color.BLACK);
         backButton.setFocusPainted(false);
 
         gbc.gridx = 0;

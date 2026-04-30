@@ -1,7 +1,19 @@
 package edu.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+
 import edu.Controller.Controller;
 
 public class loginScreen extends JFrame {
@@ -58,7 +70,7 @@ public class loginScreen extends JFrame {
 
         JButton loginButton = new JButton("Login");
         loginButton.setBackground(primaryColor);
-        loginButton.setForeground(Color.WHITE);
+        loginButton.setForeground(Color.BLACK);
         loginButton.setFocusPainted(false);
 
         gbc.gridx = 0;
@@ -67,7 +79,7 @@ public class loginScreen extends JFrame {
 
         JButton registerButton = new JButton("Register");
         registerButton.setBackground(primaryColor);
-        registerButton.setForeground(Color.WHITE);
+        registerButton.setForeground(Color.BLACK);
         registerButton.setFocusPainted(false);
 
         gbc.gridx = 1;

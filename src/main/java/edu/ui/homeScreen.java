@@ -1,11 +1,28 @@
 package edu.ui;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
+
 import edu.Controller.Controller;
 
 public class homeScreen extends JFrame {
@@ -59,7 +76,7 @@ public class homeScreen extends JFrame {
             btn.setFont(buttonFont);
             btn.setPreferredSize(new Dimension(140, 42));
             btn.setBackground(primaryColor);
-            btn.setForeground(Color.WHITE);
+            btn.setForeground(Color.BLACK);
             btn.setFocusPainted(false);
         }
 
