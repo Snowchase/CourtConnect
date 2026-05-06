@@ -10,8 +10,8 @@ public class SQLiteEventCreateManager {
     public boolean createEvent(String eventName, String sport, String eventDate, String location,
                                String description, int maxPlayers, int createdBy) {
         String sql = "INSERT INTO sporting_events " +
-                "(event_name, sport, event_date, location, description, current_players, max_players, created_by) " +
-                "VALUES (?, ?, ?, ?, ?, 0, ?, ?)";
+                "(event_name, sport, event_date, location, description, current_players, max_players, created_by, status) " +
+                "VALUES (?, ?, ?, ?, ?, 0, ?, ?, 'Active')";
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -116,6 +116,23 @@ public class SQLiteEventCreateManager {
             } catch (SQLException e) {
                 System.out.println("Closing error: " + e.getMessage());
             }
+        }
+    }
+
+    public boolean markEventCompleted(int eventId, int organizerId) {
+        String sql = "UPDATE sporting_events SET status = 'Completed' WHERE sportingid = ? AND created_by = ?";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, eventId);
+            pstmt.setInt(2, organizerId);
+
+            return pstmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("markEventCompleted error: " + e.getMessage());
+            return false;
         }
     }
 }

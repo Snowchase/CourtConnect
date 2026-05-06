@@ -44,9 +44,7 @@ public class SQLiteJoinEventManager {
 
             boolean full = false;
             if (rs.next()) {
-                int currentPlayers = rs.getInt("current_players");
-                int maxPlayers = rs.getInt("max_players");
-                full = currentPlayers >= maxPlayers;
+                full = rs.getInt("current_players") >= rs.getInt("max_players");
             }
 
             rs.close();
@@ -132,9 +130,7 @@ public class SQLiteJoinEventManager {
 
         } catch (SQLException e) {
             try {
-                if (conn != null) {
-                    conn.rollback();
-                }
+                if (conn != null) conn.rollback();
             } catch (SQLException rollbackException) {
                 System.out.println("Rollback error: " + rollbackException.getMessage());
             }
@@ -151,6 +147,10 @@ public class SQLiteJoinEventManager {
                 System.out.println("Closing error: " + e.getMessage());
             }
         }
+    }
+
+    public boolean leaveEvent(int athleteId, int eventId) {
+        return removeParticipant(athleteId, eventId);
     }
 
     public boolean removeParticipant(int athleteId, int eventId) {
@@ -177,8 +177,8 @@ public class SQLiteJoinEventManager {
 
             updateEventCount = conn.prepareStatement(
                     "UPDATE sporting_events " +
-                    "SET current_players = CASE WHEN current_players > 0 THEN current_players - 1 ELSE 0 END " +
-                    "WHERE sportingid = ?"
+                            "SET current_players = CASE WHEN current_players > 0 THEN current_players - 1 ELSE 0 END " +
+                            "WHERE sportingid = ?"
             );
             updateEventCount.setInt(1, eventId);
             updateEventCount.executeUpdate();
@@ -188,9 +188,7 @@ public class SQLiteJoinEventManager {
 
         } catch (SQLException e) {
             try {
-                if (conn != null) {
-                    conn.rollback();
-                }
+                if (conn != null) conn.rollback();
             } catch (SQLException rollbackException) {
                 System.out.println("Rollback error: " + rollbackException.getMessage());
             }
@@ -209,22 +207,6 @@ public class SQLiteJoinEventManager {
         }
     }
 
-    public boolean leaveEvent(int athleteId, int eventId) {
-        if (!athleteExists(athleteId)) {
-            return false;
-        }
-
-        if (!eventExists(eventId)) {
-            return false;
-        }
-
-        if (!isAlreadyJoined(athleteId, eventId)) {
-            return false;
-        }
-
-        return removeParticipant(athleteId, eventId);
-    }
-
     public Object[][] getAllEvents() {
         List<Object[]> rows = new ArrayList<>();
 
@@ -232,7 +214,8 @@ public class SQLiteJoinEventManager {
             Connection conn = DatabaseManager.getConnection();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(
-                    "SELECT sportingid, sport, event_date, location, current_players, max_players FROM sporting_events ORDER BY sportingid"
+                    "SELECT sportingid, sport, event_date, location, current_players, max_players " +
+                            "FROM sporting_events WHERE status = 'Active' ORDER BY sportingid"
             );
 
             while (rs.next()) {
@@ -263,11 +246,11 @@ public class SQLiteJoinEventManager {
         try {
             Connection conn = DatabaseManager.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(
-                    "SELECT se.event_name, se.sport, se.event_date, se.location " +
-                    "FROM sporting_events se " +
-                    "JOIN event_participants ep ON se.sportingid = ep.sportingid " +
-                    "WHERE ep.athlete_id = ? " +
-                    "ORDER BY se.event_date"
+                    "SELECT se.event_name, se.sport, se.event_date, se.location, se.status " +
+                            "FROM sporting_events se " +
+                            "JOIN event_participants ep ON se.sportingid = ep.sportingid " +
+                            "WHERE ep.athlete_id = ? " +
+                            "ORDER BY se.event_date"
             );
             pstmt.setInt(1, athleteId);
 
@@ -278,7 +261,8 @@ public class SQLiteJoinEventManager {
                         rs.getString("event_name"),
                         rs.getString("sport"),
                         rs.getString("event_date"),
-                        rs.getString("location")
+                        rs.getString("location"),
+                        rs.getString("status")
                 });
             }
 

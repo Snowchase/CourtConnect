@@ -7,6 +7,7 @@ public class Controller {
     private SQLiteJoinEventManager joinEventManager;
     private SQLiteProfileManager profileManager;
     private SQLiteEventCreateManager eventCreateManager;
+    private SQLiteSportSkillManager sportSkillManager;
 
     public Controller() {
         DatabaseManager.initializeDatabase();
@@ -15,6 +16,7 @@ public class Controller {
         joinEventManager = new SQLiteJoinEventManager();
         profileManager = new SQLiteProfileManager();
         eventCreateManager = new SQLiteEventCreateManager();
+        sportSkillManager = new SQLiteSportSkillManager();
     }
 
     public int login(String username, String password) {
@@ -79,5 +81,22 @@ public class Controller {
 
         boolean deleted = eventCreateManager.deleteEvent(eventId, organizerId);
         return deleted ? "SUCCESS" : "DELETE_FAILED";
+    }
+
+    public String completeEvent(int eventId, int organizerId) {
+        if (!eventCreateManager.isEventCreatedByOrganizer(eventId, organizerId)) {
+            return "NOT_OWNER";
+        }
+
+        boolean completed = eventCreateManager.markEventCompleted(eventId, organizerId);
+        return completed ? "SUCCESS" : "COMPLETE_FAILED";
+    }
+
+    public boolean saveSportSkill(int athleteId, String sport, int skillLevel) {
+        return sportSkillManager.saveSportSkill(athleteId, sport, skillLevel);
+    }
+
+    public int getSportSkill(int athleteId, String sport) {
+        return sportSkillManager.getSportSkill(athleteId, sport);
     }
 }

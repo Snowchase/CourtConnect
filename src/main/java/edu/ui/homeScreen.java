@@ -44,7 +44,7 @@ public class homeScreen extends JFrame {
         Color gridColor = new Color(220, 220, 220);
 
         setTitle("Court Connect - Home");
-        setSize(1400, 700);
+        setSize(1450, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -59,22 +59,22 @@ public class homeScreen extends JFrame {
         JButton profileButton = new JButton("Profile");
         JButton createEventButton = new JButton("Create Event");
         JButton deleteEventButton = new JButton("Delete Event");
+        JButton completeEventButton = new JButton("Mark Completed");
         JButton joinEventButton = new JButton("Join Event");
         JButton leaveEventButton = new JButton("Leave Event");
         JButton mapButton = new JButton("View Map");
         JButton refreshButton = new JButton("Refresh");
         JButton logoutButton = new JButton("Logout");
 
-        Font buttonFont = new Font("Arial", Font.BOLD, 14);
+        Font buttonFont = new Font("Arial", Font.BOLD, 13);
         JButton[] buttons = {
-                profileButton, createEventButton, deleteEventButton,
-                joinEventButton, leaveEventButton, mapButton,
-                refreshButton, logoutButton
+                profileButton, createEventButton, deleteEventButton, completeEventButton,
+                joinEventButton, leaveEventButton, mapButton, refreshButton, logoutButton
         };
 
         for (JButton btn : buttons) {
             btn.setFont(buttonFont);
-            btn.setPreferredSize(new Dimension(140, 42));
+            btn.setPreferredSize(new Dimension(150, 42));
             btn.setBackground(primaryColor);
             btn.setForeground(Color.BLACK);
             btn.setFocusPainted(false);
@@ -86,6 +86,7 @@ public class homeScreen extends JFrame {
         bottomPanel.add(profileButton);
         bottomPanel.add(createEventButton);
         bottomPanel.add(deleteEventButton);
+        bottomPanel.add(completeEventButton);
         bottomPanel.add(joinEventButton);
         bottomPanel.add(leaveEventButton);
         bottomPanel.add(mapButton);
@@ -123,10 +124,10 @@ public class homeScreen extends JFrame {
 
         notificationPanel.add(notificationLabel, BorderLayout.NORTH);
         notificationPanel.add(notificationScrollPane, BorderLayout.CENTER);
-        notificationPanel.setPreferredSize(new Dimension(450, 0));
+        notificationPanel.setPreferredSize(new Dimension(500, 0));
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, eventScrollPane, notificationPanel);
-        splitPane.setResizeWeight(0.75);
+        splitPane.setResizeWeight(0.72);
         splitPane.setDividerSize(8);
 
         homePanel.add(welcomeLabel, BorderLayout.NORTH);
@@ -138,11 +139,12 @@ public class homeScreen extends JFrame {
         if (role.equalsIgnoreCase("Athlete")) {
             createEventButton.setVisible(false);
             deleteEventButton.setVisible(false);
+            completeEventButton.setVisible(false);
         }
 
         profileButton.addActionListener(e -> {
             dispose();
-            new userProfileScreen(athleteId, role).setVisible(true);;
+            new userProfileScreen(athleteId, role).setVisible(true);
         });
 
         createEventButton.addActionListener(e -> {
@@ -179,6 +181,46 @@ public class homeScreen extends JFrame {
                         JOptionPane.showMessageDialog(this, "You can only delete events that you created.");
                     } else {
                         JOptionPane.showMessageDialog(this, "Failed to delete event.");
+                    }
+
+                    refreshEventTable();
+                    refreshNotificationTable();
+                }
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid event selection.");
+            }
+        });
+
+        completeEventButton.addActionListener(e -> {
+            try {
+                int selectedRow = eventTable.getSelectedRow();
+
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(this, "Please select an event to mark completed.");
+                    return;
+                }
+
+                int eventId = Integer.parseInt(eventTable.getValueAt(selectedRow, 0).toString());
+                String sport = eventTable.getValueAt(selectedRow, 1).toString();
+                String date = eventTable.getValueAt(selectedRow, 2).toString();
+
+                int confirm = JOptionPane.showConfirmDialog(
+                        this,
+                        "Mark this " + sport + " event on " + date + " as completed?",
+                        "Confirm Completion",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    String result = controller.completeEvent(eventId, athleteId);
+
+                    if (result.equals("SUCCESS")) {
+                        JOptionPane.showMessageDialog(this, "Event marked as completed.");
+                    } else if (result.equals("NOT_OWNER")) {
+                        JOptionPane.showMessageDialog(this, "You can only complete events that you created.");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Failed to complete event.");
                     }
 
                     refreshEventTable();
@@ -300,7 +342,7 @@ public class homeScreen extends JFrame {
 
     private void refreshNotificationTable() {
         String[] columnNames = {
-                "Event Name", "Sport", "Date", "Location"
+                "Event Name", "Sport", "Date", "Location", "Status"
         };
 
         DefaultTableModel model = new DefaultTableModel(
