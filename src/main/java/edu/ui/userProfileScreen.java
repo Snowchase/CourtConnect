@@ -23,6 +23,7 @@ public class userProfileScreen extends JFrame {
     private String role;
 
     public userProfileScreen(int athleteId, String role) {
+
         this.athleteId = athleteId;
         this.role = role;
         this.controller = new Controller();
@@ -32,7 +33,7 @@ public class userProfileScreen extends JFrame {
         Color headerColor = new Color(44, 62, 80);
 
         setTitle("Court Connect - Athlete Profile");
-        setSize(550, 450);
+        setSize(550, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -60,10 +61,22 @@ public class userProfileScreen extends JFrame {
         Object[] profile = controller.getAthleteProfile(athleteId);
 
         if (profile != null) {
-            usernameField.setText(profile[0] != null ? profile[0].toString() : "");
-            nameField.setText(profile[1] != null ? profile[1].toString() : "");
-            ageField.setText(profile[2] != null ? profile[2].toString() : "");
-            sexField.setText(profile[4] != null ? profile[4].toString() : "");
+
+            usernameField.setText(
+                    profile[0] != null ? profile[0].toString() : ""
+            );
+
+            nameField.setText(
+                    profile[1] != null ? profile[1].toString() : ""
+            );
+
+            ageField.setText(
+                    profile[2] != null ? profile[2].toString() : ""
+            );
+
+            sexField.setText(
+                    profile[4] != null ? profile[4].toString() : ""
+            );
         }
 
         usernameField.setEditable(false);
@@ -73,7 +86,7 @@ public class userProfileScreen extends JFrame {
         addTextField(panel, gbc, row++, "Username:", usernameField, headerColor);
         addTextField(panel, gbc, row++, "Name:", nameField, headerColor);
         addTextField(panel, gbc, row++, "Age:", ageField, headerColor);
-        addTextField(panel, gbc, row++, "Sex:", sexField, headerColor);
+        addTextField(panel, gbc, row++, "Gender (Optional):", sexField, headerColor);
 
         JLabel skillSectionLabel = new JLabel("Sport-Specific Skill Level");
         skillSectionLabel.setFont(new Font("Arial", Font.BOLD, 16));
@@ -84,26 +97,53 @@ public class userProfileScreen extends JFrame {
         gbc.gridwidth = 2;
         panel.add(skillSectionLabel, gbc);
 
-        String[] sports = {"Basketball", "Soccer", "Tennis", "Volleyball", "Badminton"};
+        String[] sports = {
+                "Basketball",
+                "Soccer",
+                "Tennis",
+                "Volleyball",
+                "Badminton"
+        };
+
         JComboBox<String> sportBox = new JComboBox<>(sports);
 
         JComboBox<String> skillBox = new JComboBox<>();
+
         for (int i = 1; i <= 10; i++) {
             skillBox.addItem(String.valueOf(i));
         }
 
         sportBox.addActionListener(e -> {
+
             String selectedSport = sportBox.getSelectedItem().toString();
-            int savedSkill = controller.getSportSkill(athleteId, selectedSport);
+
+            int savedSkill = controller.getSportSkill(
+                    athleteId,
+                    selectedSport
+            );
+
             skillBox.setSelectedItem(String.valueOf(savedSkill));
         });
 
         String firstSport = sportBox.getSelectedItem().toString();
-        int savedSkill = controller.getSportSkill(athleteId, firstSport);
+
+        int savedSkill = controller.getSportSkill(
+                athleteId,
+                firstSport
+        );
+
         skillBox.setSelectedItem(String.valueOf(savedSkill));
 
         addComboBox(panel, gbc, row++, "Sport:", sportBox, headerColor);
-        addComboBox(panel, gbc, row++, "Skill Level (1-10):", skillBox, headerColor);
+
+        addComboBox(
+                panel,
+                gbc,
+                row++,
+                "Skill Level (1-10):",
+                skillBox,
+                headerColor
+        );
 
         JButton updateProfileButton = new JButton("Update Profile");
         JButton saveSkillButton = new JButton("Save Sport Skill");
@@ -122,6 +162,7 @@ public class userProfileScreen extends JFrame {
         panel.add(saveSkillButton, gbc);
 
         row++;
+
         gbc.gridx = 0;
         gbc.gridy = row;
         gbc.gridwidth = 2;
@@ -130,86 +171,164 @@ public class userProfileScreen extends JFrame {
         add(panel);
 
         updateProfileButton.addActionListener(e -> {
+
             try {
+
                 String name = nameField.getText().trim();
                 String sex = sexField.getText().trim();
 
-                if (name.isEmpty() || ageField.getText().trim().isEmpty() || sex.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Please fill in all profile fields.");
+                if (name.isEmpty() || ageField.getText().trim().isEmpty()) {
+
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Please fill in the required profile fields."
+                    );
+
                     return;
                 }
 
-                int age = Integer.parseInt(ageField.getText().trim());
+                int age = Integer.parseInt(
+                        ageField.getText().trim()
+                );
 
                 boolean success = controller.updateAthleteProfile(
-                        athleteId, name, age, "", sex
+                        athleteId,
+                        name,
+                        age,
+                        "",
+                        sex
                 );
 
                 if (success) {
-                    JOptionPane.showMessageDialog(this, "Profile updated successfully.");
+
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Profile updated successfully."
+                    );
+
                 } else {
-                    JOptionPane.showMessageDialog(this, "Failed to update profile.");
+
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Failed to update profile."
+                    );
                 }
 
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Age must be a number.");
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Age must be a number."
+                );
             }
         });
 
         saveSkillButton.addActionListener(e -> {
-            String selectedSport = sportBox.getSelectedItem().toString();
-            int selectedSkill = Integer.parseInt(skillBox.getSelectedItem().toString());
 
-            boolean success = controller.saveSportSkill(athleteId, selectedSport, selectedSkill);
+            String selectedSport =
+                    sportBox.getSelectedItem().toString();
+
+            int selectedSkill =
+                    Integer.parseInt(
+                            skillBox.getSelectedItem().toString()
+                    );
+
+            boolean success = controller.saveSportSkill(
+                    athleteId,
+                    selectedSport,
+                    selectedSkill
+            );
 
             if (success) {
-                JOptionPane.showMessageDialog(this,
-                        selectedSport + " skill level saved as " + selectedSkill + ".");
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        selectedSport +
+                                " skill level saved as " +
+                                selectedSkill + "."
+                );
+
             } else {
-                JOptionPane.showMessageDialog(this, "Failed to save sport skill.");
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Failed to save sport skill."
+                );
             }
         });
 
         backButton.addActionListener(e -> {
+
             dispose();
-            new homeScreen(athleteId, role).setVisible(true);
+
+            new homeScreen(
+                    athleteId,
+                    role
+            ).setVisible(true);
         });
     }
 
-    private void addTextField(JPanel panel, GridBagConstraints gbc, int row, String labelText,
-                              JTextField field, Color labelColor) {
+    private void addTextField(
+            JPanel panel,
+            GridBagConstraints gbc,
+            int row,
+            String labelText,
+            JTextField field,
+            Color labelColor
+    ) {
+
         JLabel label = new JLabel(labelText);
+
         label.setForeground(labelColor);
         label.setFont(new Font("Arial", Font.BOLD, 14));
 
         gbc.gridx = 0;
         gbc.gridy = row;
         gbc.gridwidth = 1;
+
         panel.add(label, gbc);
 
         gbc.gridx = 1;
+
         panel.add(field, gbc);
     }
 
-    private void addComboBox(JPanel panel, GridBagConstraints gbc, int row, String labelText,
-                             JComboBox<String> comboBox, Color labelColor) {
+    private void addComboBox(
+            JPanel panel,
+            GridBagConstraints gbc,
+            int row,
+            String labelText,
+            JComboBox<String> comboBox,
+            Color labelColor
+    ) {
+
         JLabel label = new JLabel(labelText);
+
         label.setForeground(labelColor);
         label.setFont(new Font("Arial", Font.BOLD, 14));
 
         gbc.gridx = 0;
         gbc.gridy = row;
         gbc.gridwidth = 1;
+
         panel.add(label, gbc);
 
         gbc.gridx = 1;
+
         panel.add(comboBox, gbc);
     }
 
-    private void styleButton(JButton button, Color primaryColor) {
+    private void styleButton(
+            JButton button,
+            Color primaryColor
+    ) {
+
         button.setFont(new Font("Arial", Font.BOLD, 14));
+
         button.setBackground(primaryColor);
+
         button.setForeground(Color.WHITE);
+
         button.setFocusPainted(false);
     }
 }
