@@ -276,4 +276,38 @@ public class SQLiteJoinEventManager {
 
         return rows.toArray(new Object[0][]);
     }
+
+    public Object[][] getParticipantsForEvent(int eventId) {
+        List<Object[]> rows = new ArrayList<>();
+
+        try {
+            Connection conn = DatabaseManager.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(
+                    "SELECT a.athlete_id, a.username " +
+                            "FROM athletes a " +
+                            "JOIN event_participants ep ON a.athlete_id = ep.athlete_id " +
+                            "WHERE ep.sportingid = ? " +
+                            "ORDER BY a.username"
+            );
+            pstmt.setInt(1, eventId);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                rows.add(new Object[]{
+                        rs.getInt("athlete_id"),
+                        rs.getString("username")
+                });
+            }
+
+            rs.close();
+            pstmt.close();
+            conn.close();
+
+        } catch (SQLException e) {
+            System.out.println("getParticipantsForEvent error: " + e.getMessage());
+        }
+
+        return rows.toArray(new Object[0][]);
+    }
 }

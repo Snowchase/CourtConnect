@@ -74,6 +74,15 @@ public class Controller {
         return eventCreateManager.createEvent(eventName, sport, eventDate, location, description, maxPlayers, createdBy);
     }
 
+    public Object[] getEventDetails(int eventId, int organizerId) {
+        return eventCreateManager.getEventDetails(eventId, organizerId);
+    }
+
+    public String updateEvent(int eventId, int organizerId, String eventName, String sport,
+                              String eventDate, String location, String description, int maxPlayers) {
+        return eventCreateManager.updateEvent(eventId, organizerId, eventName, sport, eventDate, location, description, maxPlayers);
+    }
+
     public String deleteEvent(int eventId, int organizerId) {
         if (!eventCreateManager.isEventCreatedByOrganizer(eventId, organizerId)) {
             return "NOT_OWNER";
@@ -90,6 +99,28 @@ public class Controller {
 
         boolean completed = eventCreateManager.markEventCompleted(eventId, organizerId);
         return completed ? "SUCCESS" : "COMPLETE_FAILED";
+    }
+
+    public Object[][] getParticipantsForEvent(int eventId, int organizerId) {
+        if (!eventCreateManager.isEventCreatedByOrganizer(eventId, organizerId)) {
+            return null;
+        }
+
+        return joinEventManager.getParticipantsForEvent(eventId);
+    }
+
+    public String removeAthleteFromEvent(int eventId, int organizerId, int athleteToRemoveId) {
+        if (!eventCreateManager.isEventCreatedByOrganizer(eventId, organizerId)) {
+            return "NOT_OWNER";
+        }
+
+        if (!joinEventManager.isAlreadyJoined(athleteToRemoveId, eventId)) {
+            return "ATHLETE_NOT_IN_EVENT";
+        }
+
+        boolean removed = joinEventManager.removeParticipant(athleteToRemoveId, eventId);
+
+        return removed ? "SUCCESS" : "REMOVE_FAILED";
     }
 
     public boolean saveSportSkill(int athleteId, String sport, int skillLevel) {

@@ -50,6 +50,88 @@ public class SQLiteEventCreateManager {
         }
     }
 
+    public Object[] getEventDetails(int eventId, int organizerId) {
+        String sql = "SELECT sportingid, event_name, sport, event_date, location, description, current_players, max_players " +
+                "FROM sporting_events WHERE sportingid = ? AND created_by = ?";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, eventId);
+            pstmt.setInt(2, organizerId);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return new Object[] {
+                        rs.getInt("sportingid"),
+                        rs.getString("event_name"),
+                        rs.getString("sport"),
+                        rs.getString("event_date"),
+                        rs.getString("location"),
+                        rs.getString("description"),
+                        rs.getInt("current_players"),
+                        rs.getInt("max_players")
+                };
+            }
+
+        } catch (SQLException e) {
+            System.out.println("getEventDetails error: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    public String updateEvent(int eventId, int organizerId, String eventName, String sport,
+                              String eventDate, String location, String description, int maxPlayers) {
+        String checkSql = "SELECT current_players FROM sporting_events WHERE sportingid = ? AND created_by = ?";
+        String updateSql = "UPDATE sporting_events SET event_name = ?, sport = ?, event_date = ?, location = ?, " +
+                "description = ?, max_players = ? WHERE sportingid = ? AND created_by = ?";
+
+        try (Connection conn = DatabaseManager.getConnection()) {
+
+            PreparedStatement checkStmt = conn.prepareStatement(checkSql);
+            checkStmt.setInt(1, eventId);
+            checkStmt.setInt(2, organizerId);
+
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (!rs.next()) {
+                rs.close();
+                checkStmt.close();
+                return "NOT_OWNER";
+            }
+
+            int currentPlayers = rs.getInt("current_players");
+
+            rs.close();
+            checkStmt.close();
+
+            if (maxPlayers < currentPlayers) {
+                return "MAX_TOO_LOW";
+            }
+
+            PreparedStatement updateStmt = conn.prepareStatement(updateSql);
+            updateStmt.setString(1, eventName);
+            updateStmt.setString(2, sport);
+            updateStmt.setString(3, eventDate);
+            updateStmt.setString(4, location);
+            updateStmt.setString(5, description);
+            updateStmt.setInt(6, maxPlayers);
+            updateStmt.setInt(7, eventId);
+            updateStmt.setInt(8, organizerId);
+
+            int rowsUpdated = updateStmt.executeUpdate();
+            updateStmt.close();
+
+            return rowsUpdated > 0 ? "SUCCESS" : "UPDATE_FAILED";
+
+        } catch (SQLException e) {
+            System.out.println("updateEvent error: " + e.getMessage());
+            return "UPDATE_FAILED";
+        }
+    }
+
     public boolean deleteEvent(int eventId, int organizerId) {
         Connection conn = null;
         PreparedStatement checkOwner = null;

@@ -1,28 +1,11 @@
 package edu.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Desktop;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableModel;
-
 import edu.Controller.Controller;
 
 public class homeScreen extends JFrame {
@@ -44,7 +27,7 @@ public class homeScreen extends JFrame {
         Color gridColor = new Color(220, 220, 220);
 
         setTitle("Court Connect - Home");
-        setSize(1450, 700);
+        setSize(1700, 740);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -58,17 +41,21 @@ public class homeScreen extends JFrame {
 
         JButton profileButton = new JButton("Profile");
         JButton createEventButton = new JButton("Create Event");
+        JButton editEventButton = new JButton("Edit Event");
         JButton deleteEventButton = new JButton("Delete Event");
         JButton completeEventButton = new JButton("Mark Completed");
+        JButton viewParticipantsButton = new JButton("View Participants");
+        JButton removeAthleteButton = new JButton("Remove Athlete");
         JButton joinEventButton = new JButton("Join Event");
         JButton leaveEventButton = new JButton("Leave Event");
         JButton mapButton = new JButton("View Map");
         JButton refreshButton = new JButton("Refresh");
         JButton logoutButton = new JButton("Logout");
 
-        Font buttonFont = new Font("Arial", Font.BOLD, 13);
+        Font buttonFont = new Font("Arial", Font.BOLD, 12);
         JButton[] buttons = {
-                profileButton, createEventButton, deleteEventButton, completeEventButton,
+                profileButton, createEventButton, editEventButton, deleteEventButton,
+                completeEventButton, viewParticipantsButton, removeAthleteButton,
                 joinEventButton, leaveEventButton, mapButton, refreshButton, logoutButton
         };
 
@@ -76,17 +63,21 @@ public class homeScreen extends JFrame {
             btn.setFont(buttonFont);
             btn.setPreferredSize(new Dimension(150, 42));
             btn.setBackground(primaryColor);
-            btn.setForeground(Color.BLACK);
+            btn.setForeground(Color.WHITE);
             btn.setFocusPainted(false);
         }
 
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 12));
+        JPanel bottomPanel = new JPanel(new GridLayout(2, 6, 10, 10));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         bottomPanel.setBackground(backgroundColor);
 
         bottomPanel.add(profileButton);
         bottomPanel.add(createEventButton);
+        bottomPanel.add(editEventButton);
         bottomPanel.add(deleteEventButton);
         bottomPanel.add(completeEventButton);
+        bottomPanel.add(viewParticipantsButton);
+        bottomPanel.add(removeAthleteButton);
         bottomPanel.add(joinEventButton);
         bottomPanel.add(leaveEventButton);
         bottomPanel.add(mapButton);
@@ -138,8 +129,11 @@ public class homeScreen extends JFrame {
 
         if (role.equalsIgnoreCase("Athlete")) {
             createEventButton.setVisible(false);
+            editEventButton.setVisible(false);
             deleteEventButton.setVisible(false);
             completeEventButton.setVisible(false);
+            viewParticipantsButton.setVisible(false);
+            removeAthleteButton.setVisible(false);
         }
 
         profileButton.addActionListener(e -> {
@@ -150,6 +144,32 @@ public class homeScreen extends JFrame {
         createEventButton.addActionListener(e -> {
             dispose();
             new eventCreateScreen(athleteId, role).setVisible(true);
+        });
+
+        editEventButton.addActionListener(e -> {
+            try {
+                int selectedRow = eventTable.getSelectedRow();
+
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(this, "Please select an event to edit.");
+                    return;
+                }
+
+                int eventId = Integer.parseInt(eventTable.getValueAt(selectedRow, 0).toString());
+
+                Object[] eventDetails = controller.getEventDetails(eventId, athleteId);
+
+                if (eventDetails == null) {
+                    JOptionPane.showMessageDialog(this, "You can only edit events that you created.");
+                    return;
+                }
+
+                dispose();
+                new eventEditScreen(athleteId, role, eventId).setVisible(true);
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid event selection.");
+            }
         });
 
         deleteEventButton.addActionListener(e -> {
@@ -229,6 +249,128 @@ public class homeScreen extends JFrame {
 
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Invalid event selection.");
+            }
+        });
+
+        viewParticipantsButton.addActionListener(e -> {
+            try {
+                int selectedRow = eventTable.getSelectedRow();
+
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(this, "Please select one of your events first.");
+                    return;
+                }
+
+                int eventId = Integer.parseInt(eventTable.getValueAt(selectedRow, 0).toString());
+                String sport = eventTable.getValueAt(selectedRow, 1).toString();
+
+                Object[][] participants = controller.getParticipantsForEvent(eventId, athleteId);
+
+                if (participants == null) {
+                    JOptionPane.showMessageDialog(this, "You can only view participants for events that you created.");
+                    return;
+                }
+
+                if (participants.length == 0) {
+                    JOptionPane.showMessageDialog(this, "No athletes have joined this event yet.");
+                    return;
+                }
+
+                String[] columns = {"Athlete ID", "Username"};
+
+                JTable participantTable = new JTable(participants, columns);
+                participantTable.setRowHeight(28);
+                participantTable.setEnabled(false);
+                participantTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+                participantTable.setFont(new Font("Arial", Font.PLAIN, 14));
+
+                JScrollPane scrollPane = new JScrollPane(participantTable);
+                scrollPane.setPreferredSize(new Dimension(380, 220));
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        scrollPane,
+                        "Participants for " + sport,
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error loading participants.");
+            }
+        });
+
+        removeAthleteButton.addActionListener(e -> {
+            try {
+                int selectedRow = eventTable.getSelectedRow();
+
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(this, "Please select one of your events first.");
+                    return;
+                }
+
+                int eventId = Integer.parseInt(eventTable.getValueAt(selectedRow, 0).toString());
+                String sport = eventTable.getValueAt(selectedRow, 1).toString();
+
+                Object[][] participants = controller.getParticipantsForEvent(eventId, athleteId);
+
+                if (participants == null) {
+                    JOptionPane.showMessageDialog(this, "You can only remove athletes from events that you created.");
+                    return;
+                }
+
+                if (participants.length == 0) {
+                    JOptionPane.showMessageDialog(this, "No athletes have joined this event yet.");
+                    return;
+                }
+
+                String[] participantOptions = new String[participants.length];
+
+                for (int i = 0; i < participants.length; i++) {
+                    participantOptions[i] = participants[i][0] + " - " + participants[i][1];
+                }
+
+                String selectedParticipant = (String) JOptionPane.showInputDialog(
+                        this,
+                        "Select an athlete to remove from the " + sport + " event:",
+                        "Remove Athlete",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        participantOptions,
+                        participantOptions[0]
+                );
+
+                if (selectedParticipant == null) {
+                    return;
+                }
+
+                int athleteToRemoveId = Integer.parseInt(selectedParticipant.split(" - ")[0]);
+
+                int confirm = JOptionPane.showConfirmDialog(
+                        this,
+                        "Are you sure you want to remove this athlete from the event?",
+                        "Confirm Remove",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    String result = controller.removeAthleteFromEvent(eventId, athleteId, athleteToRemoveId);
+
+                    if (result.equals("SUCCESS")) {
+                        JOptionPane.showMessageDialog(this, "Athlete removed successfully.");
+                    } else if (result.equals("NOT_OWNER")) {
+                        JOptionPane.showMessageDialog(this, "You can only remove athletes from events that you created.");
+                    } else if (result.equals("ATHLETE_NOT_IN_EVENT")) {
+                        JOptionPane.showMessageDialog(this, "This athlete is not currently joined to the event.");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Failed to remove athlete.");
+                    }
+
+                    refreshEventTable();
+                    refreshNotificationTable();
+                }
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error removing athlete.");
             }
         });
 
